@@ -15,9 +15,12 @@ pub use note_manager::*;
 
 use async_trait::async_trait;
 use cnidarium::{StateRead, StateWrite};
-use penumbra_sdk_asset::asset::{self, Metadata};
+use penumbra_sdk_asset::asset::{self, Metadata, Id};
 use penumbra_sdk_proto::{StateReadProto, StateWriteProto};
 use tracing::instrument;
+use rand::Rng;
+use sha2::{Sha256, Digest};
+use hex;
 
 use crate::state_key;
 
@@ -38,105 +41,134 @@ pub trait TokenFactoryRead: StateRead {
 
 impl<T: StateRead + ?Sized> TokenFactoryRead for T {}
 
+// NFT structure for minting rights
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TokenFactoryNFT {
+    pub token_id: [u8; 32],
+    pub sequence: u64,
+}
+
+impl TokenFactoryNFT {
+    pub fn mint_authority_id(&self) -> Id {
+        // Generate a deterministic asset ID for the mint authority NFT
+        let mut hasher = Sha256::new();
+        hasher.update(b"factory_mint");
+        hasher.update(&self.token_id);
+        hasher.update(&self.sequence.to_le_bytes());
+        Id::from(hasher.finalize().to_vec())
+    }
+}
+
 #[async_trait]
 pub trait TokenFactory: StateWrite {
-    /// Create a new denom
+    /// Create a new token with optional bonding curve
     #[instrument(skip(self))]
-    async fn create_denom(&mut self, creator: String, subdenom: String) -> anyhow::Result<()> {
-        let denom = format!("factory/{}/{}", creator, subdenom);
+    async fn create_token(
+        &mut self,
+        metadata: Metadata,
+        initial_supply: u128,
+        with_minting: bool,
+    ) -> anyhow::Result<(String, Option<TokenFactoryNFT>)> {
+        // Generate a random 32-byte nonce for the token ID
+        let mut rng = rand::thread_rng();
+        let mut token_id = [0u8; 32];
+        rng.fill(&mut token_id);
+        
+        let denom = format!("factory/{}", hex::encode(token_id));
         
         // Check if denom already exists
         if self.get_denom_creator(&denom).await.is_some() {
             return Err(anyhow::anyhow!("denom already exists"));
         }
 
-        // Create the denom metadata
-        let metadata = Metadata::new(denom.clone())?;
-
         // Register the denom in the asset registry
         self.register_denom(&metadata).await;
 
-        // Store creator and admin
-        self.put(state_key::denom_creator::by_denom(&denom), creator.clone());
-        self.put(state_key::denom_admin::by_denom(&denom), creator);
-
-        Ok(())
-    }
-
-    /// Mint tokens
-    #[instrument(skip(self))]
-    async fn mint_tokens(&mut self, admin: String, denom: String, amount: u128) -> anyhow::Result<()> {
-        // Verify admin
-        let current_admin = self.get_denom_admin(&denom).await
-            .ok_or_else(|| anyhow::anyhow!("denom not found"))?;
-        
-        if current_admin != admin {
-            return Err(anyhow::anyhow!("unauthorized"));
+        // Create initial supply
+        if initial_supply > 0 {
+            let value = asset::Value {
+                amount: initial_supply.into(),
+                asset_id: metadata.id(),
+            };
+            // TODO: Implement minting through shielded pool integration
+            tracing::info!(?value, "creating initial supply");
         }
 
+        // Create mint authority NFT if requested
+        let nft = if with_minting {
+            Some(TokenFactoryNFT {
+                token_id,
+                sequence: 0,
+            })
+        } else {
+            None
+        };
+
+        Ok((denom, nft))
+    }
+
+    /// Create token with automatic bonding curve setup
+    #[instrument(skip(self))]
+    async fn create_token_with_bonding_curve(
+        &mut self,
+        metadata: Metadata,
+        initial_supply: u128,
+        curve_points: Vec<(asset::Id, u128)>, // (asset_id, price) pairs
+    ) -> anyhow::Result<String> {
+        // Create token without minting rights
+        let (denom, _) = self.create_token(metadata.clone(), initial_supply, false).await?;
+
+        // Create LP positions for each point in the bonding curve
+        for (asset_id, price) in curve_points {
+            // TODO: Integrate with DEX to create LP position
+            // Parameters: 
+            // - Base asset: newly created token
+            // - Quote asset: asset_id from curve_points
+            // - Price: price from curve_points
+            // - Fee: 0%
+            tracing::info!(?asset_id, ?price, "would create LP position");
+        }
+
+        Ok(denom)
+    }
+
+    /// Mint additional tokens using mint authority NFT
+    #[instrument(skip(self))]
+    async fn mint_with_authority(
+        &mut self,
+        nft: TokenFactoryNFT,
+        amount: u128,
+    ) -> anyhow::Result<(asset::Value, TokenFactoryNFT)> {
+        let denom = format!("factory/{}", hex::encode(nft.token_id));
+        
         // Get asset metadata
         let metadata = self.denom_metadata_by_asset(&asset::Id::from(denom.clone()))
             .await
             .ok_or_else(|| anyhow::anyhow!("denom not found"))?;
 
-        // Create value and mint
+        // Create new tokens
         let value = asset::Value {
             amount: amount.into(),
             asset_id: metadata.id(),
         };
 
-        // TODO: Implement actual minting logic
-        // This would need to integrate with the shielded pool's note system
-        // For now we just log
-        tracing::info!(?value, "minting tokens");
+        // Create next sequence NFT
+        let next_nft = TokenFactoryNFT {
+            token_id: nft.token_id,
+            sequence: nft.sequence + 1,
+        };
 
-        Ok(())
+        // TODO: Implement actual minting through shielded pool integration
+        tracing::info!(?value, "minting tokens with authority");
+
+        Ok((value, next_nft))
     }
 
-    /// Burn tokens
+    /// Burn tokens explicitly
     #[instrument(skip(self))]
-    async fn burn_tokens(&mut self, admin: String, denom: String, amount: u128) -> anyhow::Result<()> {
-        // Verify admin
-        let current_admin = self.get_denom_admin(&denom).await
-            .ok_or_else(|| anyhow::anyhow!("denom not found"))?;
-        
-        if current_admin != admin {
-            return Err(anyhow::anyhow!("unauthorized"));
-        }
-
-        // Get asset metadata
-        let metadata = self.denom_metadata_by_asset(&asset::Id::from(denom.clone()))
-            .await
-            .ok_or_else(|| anyhow::anyhow!("denom not found"))?;
-
-        // Create value and burn
-        let value = asset::Value {
-            amount: amount.into(),
-            asset_id: metadata.id(),
-        };
-
-        // TODO: Implement actual burning logic
-        // This would need to integrate with the shielded pool's note system
-        // For now we just log
+    async fn burn_tokens(&mut self, value: asset::Value) -> anyhow::Result<()> {
+        // TODO: Implement actual burning through shielded pool integration
         tracing::info!(?value, "burning tokens");
-
-        Ok(())
-    }
-
-    /// Change admin
-    #[instrument(skip(self))]
-    async fn change_admin(&mut self, current_admin: String, denom: String, new_admin: String) -> anyhow::Result<()> {
-        // Verify current admin
-        let stored_admin = self.get_denom_admin(&denom).await
-            .ok_or_else(|| anyhow::anyhow!("denom not found"))?;
-        
-        if stored_admin != current_admin {
-            return Err(anyhow::anyhow!("unauthorized"));
-        }
-
-        // Update admin
-        self.put(state_key::denom_admin::by_denom(&denom), new_admin);
-
         Ok(())
     }
 }
