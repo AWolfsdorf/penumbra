@@ -5869,6 +5869,58 @@ dependencies = [
 ]
 
 [[package]]
+name = "penumbra-sdk-tokenfactory"
+version = "2.0.0-alpha.8"
+dependencies = [
+ "anyhow",
+ "ark-ff",
+ "ark-groth16",
+ "ark-r1cs-std",
+ "ark-relations",
+ "ark-serialize",
+ "ark-snark",
+ "async-stream",
+ "async-trait",
+ "base64 0.21.7",
+ "bech32",
+ "bitvec",
+ "cnidarium",
+ "cnidarium-component",
+ "decaf377",
+ "decaf377-rdsa",
+ "ed25519-consensus",
+ "futures",
+ "getrandom",
+ "hex",
+ "im",
+ "metrics",
+ "once_cell",
+ "penumbra-sdk-asset",
+ "penumbra-sdk-keys",
+ "penumbra-sdk-num",
+ "penumbra-sdk-proof-params",
+ "penumbra-sdk-proto",
+ "penumbra-sdk-sct",
+ "penumbra-sdk-shielded-pool",
+ "penumbra-sdk-tct",
+ "penumbra-sdk-txhash",
+ "proptest",
+ "rand_chacha",
+ "rand_core",
+ "regex",
+ "serde",
+ "serde_unit_struct",
+ "serde_with",
+ "sha2 0.10.8",
+ "tap",
+ "tendermint 0.40.3",
+ "tokio",
+ "tonic",
+ "tracing",
+ "tracing-subscriber 0.3.18",
+]
+
+[[package]]
 name = "penumbra-sdk-tower-trace"
 version = "2.0.0-alpha.8"
 dependencies = [

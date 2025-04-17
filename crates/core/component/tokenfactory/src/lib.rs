@@ -17,7 +17,7 @@ use async_trait::async_trait;
 use cnidarium::{StateRead, StateWrite};
 use penumbra_sdk_asset::asset::{self, Metadata, Id};
 use penumbra_sdk_proto::{StateReadProto, StateWriteProto};
-use tracing::instrument;
+use tracing::Instrument;
 use rand::Rng;
 use sha2::{Sha256, Digest};
 use hex;
