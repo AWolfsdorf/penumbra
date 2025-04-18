@@ -1,44 +1,48 @@
 use async_trait::async_trait;
 use cnidarium::{StateRead, StateWrite};
-use penumbra_sdk_asset::asset;
+use penumbra_sdk_asset::{asset::REGISTRY, Value};
+use penumbra_sdk_num::Amount;
 use penumbra_sdk_keys::Address;
-use penumbra_sdk_proto::{StateReadProto, StateWriteProto};
 
-use crate::{TokenFactory, TokenFactoryRead};
+use crate::{
+    TokenFactoryRead,
+    note_manager::TokenFactoryNoteManager,
+    note_finder::TokenFactoryNoteFinder,
+};
 
 #[async_trait]
-pub trait TokenFactoryMint: StateRead + StateWrite {
+pub trait TokenFactoryMint: StateRead + StateWrite + TokenFactoryRead + TokenFactoryNoteManager + TokenFactoryNoteFinder {
     async fn mint_tokens_to_address(
         &mut self,
         admin: String,
         denom: String,
-        amount: u128,
+        amount: Amount,
         recipient: Address,
     ) -> anyhow::Result<()> {
         // Verify admin
-        let current_admin = self.get_denom_admin(&denom).await
+        let current_admin = self.get_denom_admin(&denom).await?
             .ok_or_else(|| anyhow::anyhow!("denom not found"))?;
         
         if current_admin != admin {
             return Err(anyhow::anyhow!("unauthorized"));
         }
 
-        // Get asset metadata
-        let metadata = self.denom_metadata_by_asset(&asset::Id::from(denom.clone()))
-            .await
-            .ok_or_else(|| anyhow::anyhow!("denom not found"))?;
+        // Parse denomination to get asset ID
+        let base_denom = REGISTRY
+            .parse_denom(&denom)
+            .ok_or_else(|| anyhow::anyhow!("invalid denomination"))?;
 
         // Create value and mint
-        let value = asset::Value {
-            amount: amount.into(),
-            asset_id: metadata.id(),
+        let _value = Value {
+            amount,
+            asset_id: base_denom.id(),
         };
 
         // Create a new note for the recipient
         let note = penumbra_sdk_shielded_pool::Note::generate(
             &mut rand::thread_rng(),
             &recipient,
-            value,
+            _value,
         );
 
         // Add the note to the shielded pool
@@ -51,51 +55,51 @@ pub trait TokenFactoryMint: StateRead + StateWrite {
         &mut self,
         admin: String,
         denom: String,
-        amount: u128,
+        amount: Amount,
         owner: Address,
     ) -> anyhow::Result<()> {
         // Verify admin
-        let current_admin = self.get_denom_admin(&denom).await
+        let current_admin = self.get_denom_admin(&denom).await?
             .ok_or_else(|| anyhow::anyhow!("denom not found"))?;
         
         if current_admin != admin {
             return Err(anyhow::anyhow!("unauthorized"));
         }
 
-        // Get asset metadata
-        let metadata = self.denom_metadata_by_asset(&asset::Id::from(denom.clone()))
-            .await
-            .ok_or_else(|| anyhow::anyhow!("denom not found"))?;
+        // Parse denomination to get asset ID
+        let base_denom = REGISTRY
+            .parse_denom(&denom)
+            .ok_or_else(|| anyhow::anyhow!("invalid denomination"))?;
 
         // Create value and burn
-        let value = asset::Value {
-            amount: amount.into(),
-            asset_id: metadata.id(),
+        let _value = Value {
+            amount,
+            asset_id: base_denom.id(),
         };
 
         // Find and remove notes from the owner
         let notes = self.find_notes_by_address(&owner).await?;
-        let mut remaining = value.amount;
+        let mut remaining = amount;
         let mut notes_to_remove = Vec::new();
 
         for note in notes {
-            if note.asset_id() == value.asset_id {
+            if note.asset_id() == base_denom.id() {
                 if note.amount() <= remaining {
-                    remaining -= note.amount();
+                    remaining = remaining - note.amount();
                     notes_to_remove.push(note);
                 } else {
                     // Split the note if needed
-                    let split_note = note.split(remaining)?;
-                    notes_to_remove.push(split_note.0);
-                    remaining = 0.into();
+                    let (split_note, _) = self.split_note(note, remaining).await?;
+                    notes_to_remove.push(split_note);
+                    remaining = Amount::zero();
                 }
             }
-            if remaining == 0.into() {
+            if remaining == Amount::zero() {
                 break;
             }
         }
 
-        if remaining != 0.into() {
+        if remaining != Amount::zero() {
             return Err(anyhow::anyhow!("insufficient balance"));
         }
 
@@ -108,4 +112,4 @@ pub trait TokenFactoryMint: StateRead + StateWrite {
     }
 }
 
-impl<T: StateRead + StateWrite + ?Sized> TokenFactoryMint for T {} 
+impl<T: StateRead + StateWrite + TokenFactoryRead + TokenFactoryNoteManager + TokenFactoryNoteFinder + ?Sized> TokenFactoryMint for T {} 

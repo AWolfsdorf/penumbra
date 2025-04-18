@@ -1,27 +1,33 @@
 use async_trait::async_trait;
 use cnidarium::{StateRead, StateWrite};
-use penumbra_sdk_asset::asset;
-use penumbra_sdk_proto::{StateReadProto, StateWriteProto};
+use penumbra_sdk_num::Amount;
 
-use crate::{TokenFactory, TokenFactoryRead};
+use crate::{TokenFactory, TokenFactoryNft, TokenMetadata};
 
 #[async_trait]
-pub trait TokenFactoryComponent: StateRead + StateWrite {
-    async fn create_denom(&mut self, creator: String, subdenom: String) -> anyhow::Result<()> {
-        <Self as TokenFactory>::create_denom(self, creator, subdenom).await
+pub trait TokenFactoryComponent: StateRead + StateWrite + TokenFactory {
+    async fn create_token_component(
+        &mut self,
+        metadata: TokenMetadata,
+        initial_supply: Amount,
+    ) -> anyhow::Result<(String, TokenFactoryNft)> {
+        <Self as TokenFactory>::create_token(self, metadata, initial_supply).await
     }
 
-    async fn mint_tokens(&mut self, admin: String, denom: String, amount: u128) -> anyhow::Result<()> {
-        <Self as TokenFactory>::mint_tokens(self, admin, denom, amount).await
+    async fn mint_token_component(
+        &mut self,
+        nft: &TokenFactoryNft,
+        amount: Amount,
+    ) -> anyhow::Result<TokenFactoryNft> {
+        <Self as TokenFactory>::mint_token(self, nft, amount).await
     }
 
-    async fn burn_tokens(&mut self, admin: String, denom: String, amount: u128) -> anyhow::Result<()> {
-        <Self as TokenFactory>::burn_tokens(self, admin, denom, amount).await
-    }
-
-    async fn change_admin(&mut self, current_admin: String, denom: String, new_admin: String) -> anyhow::Result<()> {
-        <Self as TokenFactory>::change_admin(self, current_admin, denom, new_admin).await
+    async fn burn_mint_authority_component(
+        &mut self,
+        nft: &TokenFactoryNft,
+    ) -> anyhow::Result<()> {
+        <Self as TokenFactory>::burn_mint_authority(self, nft).await
     }
 }
 
-impl<T: StateRead + StateWrite + ?Sized> TokenFactoryComponent for T {} 
+impl<T: StateRead + StateWrite + TokenFactory + ?Sized> TokenFactoryComponent for T {} 

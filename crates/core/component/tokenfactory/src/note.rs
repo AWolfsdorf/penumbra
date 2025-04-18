@@ -1,7 +1,6 @@
 use std::str::FromStr;
 
 use penumbra_sdk_asset::asset;
-use penumbra_sdk_keys::Address;
 
 /// A token factory note represents a token created through the token factory.
 #[derive(Clone, Debug, PartialEq, Eq)]

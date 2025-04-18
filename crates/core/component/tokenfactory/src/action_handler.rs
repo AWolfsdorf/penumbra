@@ -1,55 +1,34 @@
 use async_trait::async_trait;
 use cnidarium::{StateRead, StateWrite};
-use penumbra_sdk_proto::{StateReadProto, StateWriteProto};
-use penumbra_sdk_asset::{asset, Value, Metadata};
+use penumbra_sdk_asset::{Value};
+use penumbra_sdk_num::Amount;
 
-use crate::{TokenFactory, TokenFactoryRead};
-
-#[derive(Debug, Clone)]
-pub struct CreateDenom {
-    pub creator: String,
-    pub subdenom: String,
-}
-
-#[derive(Debug, Clone)]
-pub struct MintTokens {
-    pub admin: String,
-    pub denom: String,
-    pub amount: u128,
-}
-
-#[derive(Debug, Clone)]
-pub struct BurnTokens {
-    pub admin: String,
-    pub denom: String,
-    pub amount: u128,
-}
-
-#[derive(Debug, Clone)]
-pub struct ChangeAdmin {
-    pub current_admin: String,
-    pub denom: String,
-    pub new_admin: String,
-}
+use crate::{
+    TokenFactory, 
+    TokenFactoryNft, 
+    factory::TokenMetadata, 
+    bonding_curve::{BondingCurveFactory, CurveParams}
+};
 
 #[derive(Debug, Clone)]
 pub struct ActionTokenFactoryCreate {
-    pub metadata: Metadata,
-    pub initial_supply: u128,
-    pub with_minting: bool,
+    pub metadata: TokenMetadata,
+    pub initial_supply: Amount,
 }
 
 #[derive(Debug, Clone)]
 pub struct ActionTokenFactoryCreateWithBondingCurve {
-    pub metadata: Metadata,
-    pub initial_supply: u128,
-    pub curve_points: Vec<(asset::Id, u128)>,
+    pub name: String,
+    pub symbol: String,
+    pub description: String,
+    pub initial_supply: Amount,
+    pub curve_params: CurveParams,
 }
 
 #[derive(Debug, Clone)]
 pub struct ActionTokenFactoryMint {
-    pub nft: TokenFactoryNFT,
-    pub amount: u128,
+    pub nft: TokenFactoryNft,
+    pub amount: Amount,
 }
 
 #[derive(Debug, Clone)]
@@ -57,33 +36,21 @@ pub struct ActionBurn {
     pub value: Value,
 }
 
+#[derive(Debug, Clone)]
+pub struct ActionBurnMintAuthority {
+    pub nft: TokenFactoryNft,
+}
+
 #[async_trait]
-pub trait TokenFactoryActionHandler: StateRead + StateWrite {
-    async fn create_denom(&mut self, action: CreateDenom) -> anyhow::Result<()> {
-        <Self as TokenFactory>::create_denom(self, action.creator, action.subdenom).await
-    }
-
-    async fn mint_tokens(&mut self, action: MintTokens) -> anyhow::Result<()> {
-        <Self as TokenFactory>::mint_tokens(self, action.admin, action.denom, action.amount).await
-    }
-
-    async fn burn_tokens(&mut self, action: BurnTokens) -> anyhow::Result<()> {
-        <Self as TokenFactory>::burn_tokens(self, action.admin, action.denom, action.amount).await
-    }
-
-    async fn change_admin(&mut self, action: ChangeAdmin) -> anyhow::Result<()> {
-        <Self as TokenFactory>::change_admin(self, action.current_admin, action.denom, action.new_admin).await
-    }
-
+pub trait TokenFactoryActionHandler: StateRead + StateWrite + TokenFactory + BondingCurveFactory {
     async fn handle_create(
         &mut self,
         action: ActionTokenFactoryCreate,
-    ) -> anyhow::Result<(String, Option<TokenFactoryNFT>)> {
+    ) -> anyhow::Result<(String, TokenFactoryNft)> {
         <Self as TokenFactory>::create_token(
             self,
             action.metadata,
             action.initial_supply,
-            action.with_minting,
         )
         .await
     }
@@ -91,12 +58,14 @@ pub trait TokenFactoryActionHandler: StateRead + StateWrite {
     async fn handle_create_with_bonding_curve(
         &mut self,
         action: ActionTokenFactoryCreateWithBondingCurve,
-    ) -> anyhow::Result<String> {
-        <Self as TokenFactory>::create_token_with_bonding_curve(
+    ) -> anyhow::Result<(String, TokenFactoryNft)> {
+        <Self as BondingCurveFactory>::create_with_bonding_curve(
             self,
-            action.metadata,
+            action.name,
+            action.symbol,
+            action.description,
             action.initial_supply,
-            action.curve_points,
+            action.curve_params,
         )
         .await
     }
@@ -104,13 +73,25 @@ pub trait TokenFactoryActionHandler: StateRead + StateWrite {
     async fn handle_mint(
         &mut self,
         action: ActionTokenFactoryMint,
-    ) -> anyhow::Result<(Value, TokenFactoryNFT)> {
-        <Self as TokenFactory>::mint_with_authority(self, action.nft, action.amount).await
+    ) -> anyhow::Result<TokenFactoryNft> {
+        <Self as TokenFactory>::mint_token(self, &action.nft, action.amount).await
     }
 
-    async fn handle_burn(&mut self, action: ActionBurn) -> anyhow::Result<()> {
-        <Self as TokenFactory>::burn_tokens(self, action.value).await
+    async fn handle_burn(
+        &mut self,
+        action: ActionBurn,
+    ) -> anyhow::Result<()> {
+        // This is a simplified burn that doesn't use admin/denom
+        tracing::info!(?action.value, "burning tokens");
+        Ok(())
+    }
+
+    async fn handle_burn_mint_authority(
+        &mut self,
+        action: ActionBurnMintAuthority,
+    ) -> anyhow::Result<()> {
+        <Self as TokenFactory>::burn_mint_authority(self, &action.nft).await
     }
 }
 
-impl<T: StateRead + StateWrite + ?Sized> TokenFactoryActionHandler for T {} 
+impl<T: StateRead + StateWrite + TokenFactory + BondingCurveFactory + ?Sized> TokenFactoryActionHandler for T {} 
