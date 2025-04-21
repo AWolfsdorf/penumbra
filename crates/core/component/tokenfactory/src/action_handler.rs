@@ -1,28 +1,17 @@
 use async_trait::async_trait;
 use cnidarium::{StateRead, StateWrite};
-use penumbra_sdk_asset::{Value};
+use penumbra_sdk_asset::{asset::Metadata, Value};
 use penumbra_sdk_num::Amount;
 
 use crate::{
     TokenFactory, 
     TokenFactoryNft, 
-    factory::TokenMetadata, 
-    bonding_curve::{BondingCurveFactory, CurveParams}
 };
 
 #[derive(Debug, Clone)]
 pub struct ActionTokenFactoryCreate {
-    pub metadata: TokenMetadata,
+    pub metadata: Metadata,
     pub initial_supply: Amount,
-}
-
-#[derive(Debug, Clone)]
-pub struct ActionTokenFactoryCreateWithBondingCurve {
-    pub name: String,
-    pub symbol: String,
-    pub description: String,
-    pub initial_supply: Amount,
-    pub curve_params: CurveParams,
 }
 
 #[derive(Debug, Clone)]
@@ -42,7 +31,7 @@ pub struct ActionBurnMintAuthority {
 }
 
 #[async_trait]
-pub trait TokenFactoryActionHandler: StateRead + StateWrite + TokenFactory + BondingCurveFactory {
+pub trait TokenFactoryActionHandler: StateRead + StateWrite + TokenFactory {
     async fn handle_create(
         &mut self,
         action: ActionTokenFactoryCreate,
@@ -51,21 +40,6 @@ pub trait TokenFactoryActionHandler: StateRead + StateWrite + TokenFactory + Bon
             self,
             action.metadata,
             action.initial_supply,
-        )
-        .await
-    }
-
-    async fn handle_create_with_bonding_curve(
-        &mut self,
-        action: ActionTokenFactoryCreateWithBondingCurve,
-    ) -> anyhow::Result<(String, TokenFactoryNft)> {
-        <Self as BondingCurveFactory>::create_with_bonding_curve(
-            self,
-            action.name,
-            action.symbol,
-            action.description,
-            action.initial_supply,
-            action.curve_params,
         )
         .await
     }
@@ -94,4 +68,4 @@ pub trait TokenFactoryActionHandler: StateRead + StateWrite + TokenFactory + Bon
     }
 }
 
-impl<T: StateRead + StateWrite + TokenFactory + BondingCurveFactory + ?Sized> TokenFactoryActionHandler for T {} 
+impl<T: StateRead + StateWrite + TokenFactory + ?Sized> TokenFactoryActionHandler for T {} 

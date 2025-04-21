@@ -1,38 +1,13 @@
 use async_trait::async_trait;
-use cnidarium::{StateRead, StateWrite};
-use penumbra_sdk_asset::{asset, Value};
+use cnidarium::StateRead;
+use penumbra_sdk_asset::{asset::{self, Metadata}, Value};
 use penumbra_sdk_num::Amount;
 use penumbra_sdk_keys::Address;
-use penumbra_sdk_shielded_pool::{Note, component::AssetRegistry};
+use penumbra_sdk_shielded_pool::Note;
 use penumbra_sdk_proto::core::asset::v1 as pb;
 use rand::{RngCore, CryptoRng, rngs::StdRng, SeedableRng};
 
 use crate::{state_key, TokenFactoryNft, TokenFactoryNoteManager};
-
-#[derive(Debug, Clone)]
-pub struct TokenMetadata {
-    pub name: String,
-    pub symbol: String,
-    pub description: String,
-}
-
-impl From<TokenMetadata> for pb::Metadata {
-    fn from(metadata: TokenMetadata) -> Self {
-        pb::Metadata {
-            name: metadata.name,
-            symbol: metadata.symbol,
-            description: metadata.description,
-            base: String::new(),
-            display: String::new(),
-            denom_units: vec![],
-            penumbra_asset_id: None,
-            images: vec![],
-            priority_score: 0,
-            badges: vec![],
-            coingecko_id: String::new(),
-        }
-    }
-}
 
 /// Trait for reading token factory state
 #[async_trait]
@@ -72,11 +47,11 @@ fn create_thread_safe_rng() -> impl RngCore + CryptoRng + Send {
 }
 
 #[async_trait]
-pub trait TokenFactory: StateRead + StateWrite + TokenFactoryNoteManager + AssetRegistry {
+pub trait TokenFactory: TokenFactoryNoteManager {
     /// Create a new token with metadata and initial supply
     async fn create_token(
         &mut self,
-        metadata: TokenMetadata,
+        metadata: Metadata,
         initial_supply: Amount,
     ) -> anyhow::Result<(String, TokenFactoryNft)> {
         let token_id = hex::encode(generate_random_bytes());
@@ -86,13 +61,6 @@ pub trait TokenFactory: StateRead + StateWrite + TokenFactoryNoteManager + Asset
         if self.get_denom_creator(&denom).await?.is_some() {
             return Err(anyhow::anyhow!("denom already exists"));
         }
-
-        // Convert TokenMetadata to asset::Metadata
-        let proto_metadata: pb::Metadata = metadata.into();
-        let asset_metadata = asset::Metadata::try_from(proto_metadata)?;
-
-        // Register the denom in the asset registry
-        self.register_denom(&asset_metadata).await;
 
         // Create initial supply
         if initial_supply > Amount::zero() {
@@ -187,4 +155,4 @@ pub trait TokenFactory: StateRead + StateWrite + TokenFactoryNoteManager + Asset
     }
 }
 
-impl<T: StateRead + StateWrite + TokenFactoryNoteManager + AssetRegistry + ?Sized> TokenFactory for T {} 
+impl<T: TokenFactoryNoteManager + ?Sized> TokenFactory for T {}
