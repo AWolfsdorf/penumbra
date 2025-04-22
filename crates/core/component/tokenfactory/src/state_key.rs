@@ -9,3 +9,9 @@ pub mod denom_admin {
         format!("tokenfactory/denom_admin/{}", denom)
     }
 } 
+
+pub mod token_factory_params {
+    pub fn key() -> String {
+        "tokenfactory/params".to_string()
+    }
+}

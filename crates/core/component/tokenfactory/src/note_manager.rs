@@ -3,9 +3,33 @@ use cnidarium::{StateRead, StateWrite};
 use penumbra_sdk_shielded_pool::Note;
 use penumbra_sdk_num::Amount;
 
+use crate::state_key;
+
+/// Trait for reading token factory state
+#[async_trait]
+pub trait TokenFactoryRead: StateRead {
+    /// Gets the creator of a denomination
+    async fn get_denom_creator(&self, denom: &str) -> anyhow::Result<Option<String>> {
+        self.get_raw(&state_key::denom_creator::by_denom(denom))
+            .await
+            .map(|v| v.map(|bytes| String::from_utf8(bytes).expect("valid UTF-8")))
+            .map_err(Into::into)
+    }
+
+    /// Gets the admin of a denomination
+    async fn get_denom_admin(&self, denom: &str) -> anyhow::Result<Option<String>> {
+        self.get_raw(&state_key::denom_admin::by_denom(denom))
+            .await
+            .map(|v| v.map(|bytes| String::from_utf8(bytes).expect("valid UTF-8")))
+            .map_err(Into::into)
+    }
+}
+
+impl<T: StateRead + ?Sized> TokenFactoryRead for T {}
+
 /// Trait for token factory note management
 #[async_trait]
-pub trait TokenFactoryNoteManager: StateRead + StateWrite {
+pub trait TokenFactoryNoteManager: TokenFactoryRead + StateWrite {
     /// Add a note to the shielded pool
     async fn add_note(&mut self, note: Note) -> anyhow::Result<()> {
         // TODO: Implement actual note adding logic
