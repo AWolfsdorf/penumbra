@@ -1,16 +1,17 @@
-pub mod position;
-pub mod state_key;
-pub mod note_manager;
-pub mod nft;
+pub mod create;
 pub mod factory;
 pub mod genesis;
+pub mod nft;
+pub mod note_manager;
 pub mod params;
-pub mod action_handler;
-pub mod actions;
+pub mod position;
+pub mod state_key;
 
-pub use position::*;
-pub use note_manager::*;
-pub use nft::*;
+pub use create::*;
 pub use factory::*;
-pub use actions::*;
-pub use action_handler::ActionTokenFactoryCreate;
+pub use nft::*;
+pub use note_manager::*;
+pub use position::*;
+
+#[cfg(feature = "component")]
+pub mod component;

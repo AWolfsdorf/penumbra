@@ -1,8 +1,9 @@
+use anyhow::Context;
 use serde::{Deserialize, Serialize};
 
 use crate::params::TokenFactoryParams;
 
-use penumbra_sdk_proto::{penumbra::core::component::tokenfactory::v1 as pb, DomainType};
+use penumbra_sdk_proto::{penumbra::core::component::tokenfactory::v1alpha as pb, DomainType};
 
 #[derive(Deserialize, Serialize, Debug, Clone, Default)]
 #[serde(try_from = "pb::GenesisContent", into = "pb::GenesisContent")]
@@ -10,6 +11,9 @@ pub struct Content {
     pub token_factory_params: TokenFactoryParams,
 }
 
+impl DomainType for Content {
+    type Proto = pb::GenesisContent;
+}
 
 impl From<Content> for pb::GenesisContent {
     fn from(value: Content) -> Self {
