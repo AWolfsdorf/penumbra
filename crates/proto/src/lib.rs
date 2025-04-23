@@ -154,6 +154,13 @@ pub mod penumbra {
                     include!("gen/penumbra.core.component.stake.v1.serde.rs");
                 }
             }
+
+            pub mod tokenfactory {
+                pub mod v1alpha {
+                    include!("gen/penumbra.core.component.tokenfactory.v1alpha.rs");
+                    include!("gen/penumbra.core.component.tokenfactory.v1alpha.serde.rs");
+                }
+            }
         }
 
         pub mod keys {

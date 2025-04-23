@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-package penumbra.core.component.tokenfactory.v1;
+package penumbra.core.component.tokenfactory.v1alpha;
 
 import "penumbra/core/asset/v1/asset.proto";
 
 // TokenFactoryParameters defines the parameters for the tokenfactory component.
 message TokenFactoryParameters {
-  // Add fields as needed
+    bool is_enabled = 1;
 }
 
 // GenesisContent defines the genesis state for the tokenfactory component.
@@ -18,3 +18,15 @@ message GenesisContent {
 message ActionTokenFactoryCreate {
   // Add fields as needed
 } 
+
+// ActionTokenBurn defines the action for burning a token.
+message ActionTokenBurn {
+  // Add fields as needed
+}
+
+// TokenBurn defines the action for burning a token.
+message TokenBurn {
+  string token_id = 1;
+  uint64 seq = 2;
+  uint64 amount = 3;
+}
