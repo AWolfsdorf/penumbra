@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package penumbra.core.component.tokenfactory.v1;
+
+import "penumbra/core/asset/v1/asset.proto";
+
+// TokenFactoryParameters defines the parameters for the tokenfactory component.
+message TokenFactoryParameters {
+  // Add fields as needed
+}
+
+// GenesisContent defines the genesis state for the tokenfactory component.
+message GenesisContent {
+  TokenFactoryParameters token_factory_params = 1;
+}
+
+// ActionTokenFactoryCreate defines the action for creating a new token factory.
+message ActionTokenFactoryCreate {
+  // Add fields as needed
+} 

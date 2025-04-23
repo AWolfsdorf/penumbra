@@ -3,6 +3,7 @@ use cnidarium_component::Component;
 use std::sync::Arc;
 use tendermint::v0_37::abci;
 use async_trait::async_trait;
+use penumbra_sdk_proto::StateWriteProto;
 
 use crate::{genesis, params::TokenFactoryParams, state_key};
 
@@ -39,7 +40,8 @@ impl Component for TokenFactory {
 #[async_trait]
 pub trait StateWriteExt: StateWrite {
     fn put_token_factory_params(&mut self, params: TokenFactoryParams) {
-        self.put(state_key::token_factory_params::key(), params);
+        self.object_put(state_key::parameters::updated_flag(), ());
+        self.put(state_key::parameters::key().into(), params);
     }
 }
 

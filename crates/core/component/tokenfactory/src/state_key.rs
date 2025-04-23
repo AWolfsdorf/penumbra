@@ -10,8 +10,12 @@ pub mod denom_admin {
     }
 } 
 
-pub mod token_factory_params {
-    pub fn key() -> String {
-        "tokenfactory/params".to_string()
+pub mod parameters {
+    pub fn key() -> &'static str {
+        "tokenfactory/params"
+    }
+
+    pub fn updated_flag() -> &'static str {
+        "tokenfactory/params/updated"
     }
 }
