@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package penumbra.core.component.tokenfactory.v1alpha;
 
-import "penumbra/core/asset/v1/asset.proto";
+import "penumbra/core/num/v1/num.proto";
 
 // TokenFactoryParameters defines the parameters for the tokenfactory component.
 message TokenFactoryParameters {
@@ -14,19 +14,50 @@ message GenesisContent {
   TokenFactoryParameters token_factory_params = 1;
 }
 
-// ActionTokenFactoryCreate defines the action for creating a new token factory.
-message ActionTokenFactoryCreate {
-  // Add fields as needed
-} 
+// TokenFactoryPosition defines the position for a token factory.
+message TokenFactoryPosition {
+  // A random value used to disambiguate different positions with the exact same
+  // trading function.  The chain should reject newly created positions with the
+  // same nonce as an existing position.  This ensures that `TokenId`s will
+  // be unique, and allows us to track position ownership with a
+  // sequence of stateful NFTs based on the `TokenId`.
+  bytes nonce = 1;
+}
 
-// ActionTokenBurn defines the action for burning a token.
-message ActionTokenBurn {
-  // Add fields as needed
+// TokenFactoryNft defines the NFT for a token factory.
+message TokenFactoryNft {
+  TokenId token_id = 1;
+  num.v1.Amount amount = 2;
+}
+
+// TokenId defines the hash of the id of a token.
+message TokenId {
+  bytes inner = 1;
+
+  // Alternatively, a Bech32m-encoded string representation of the `inner`
+  // bytes.
+  //
+  // NOTE: implementations are not required to support parsing this field.
+  // Implementations should prefer to encode the bytes in all messages they
+  // produce. Implementations must not accept messages with both `inner` and
+  // `alt_bech32m` set.
+  string alt_bech32m = 2;
 }
 
 // TokenBurn defines the action for burning a token.
 message TokenBurn {
-  string token_id = 1;
+  TokenId token_id = 1;
+  // The sequence number of the token factory.
   uint64 seq = 2;
-  uint64 amount = 3;
+  // The amount of tokens to burn.
+  num.v1.Amount amount = 3;
+}
+
+// EventTokenBurn defines the event for burning a token.
+message EventTokenBurn {
+  TokenId token_id = 1;
+  // The sequence number of the token factory.
+  uint64 seq = 2;
+  // The amount of tokens burned.
+  num.v1.Amount amount = 3;
 }

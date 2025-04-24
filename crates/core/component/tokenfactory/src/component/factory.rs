@@ -44,11 +44,6 @@ pub trait StateWriteExt: StateWrite {
         self.object_put(state_key::parameters::updated_flag(), ());
         self.put(state_key::parameters::key().into(), params);
     }
-
-    async fn burn_token(&mut self, _token_id: String, _amount: u64) -> Result<()> {
-        // TODO: implement
-        Ok(())
-    }
 }
 
 impl<T: StateWrite + ?Sized> StateWriteExt for T {}

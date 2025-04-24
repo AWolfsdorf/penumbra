@@ -31,45 +31,81 @@ impl ::prost::Name for GenesisContent {
         "/penumbra.core.component.tokenfactory.v1alpha.GenesisContent".into()
     }
 }
-/// ActionTokenFactoryCreate defines the action for creating a new token factory.
-///
-/// Add fields as needed
-#[derive(Clone, Copy, PartialEq, ::prost::Message)]
-pub struct ActionTokenFactoryCreate {}
-impl ::prost::Name for ActionTokenFactoryCreate {
-    const NAME: &'static str = "ActionTokenFactoryCreate";
+/// TokenFactoryPosition defines the position for a token factory.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TokenFactoryPosition {
+    /// A random value used to disambiguate different positions with the exact same
+    /// trading function.  The chain should reject newly created positions with the
+    /// same nonce as an existing position.  This ensures that `TokenId`s will
+    /// be unique, and allows us to track position ownership with a
+    /// sequence of stateful NFTs based on the `TokenId`.
+    #[prost(bytes = "vec", tag = "1")]
+    pub nonce: ::prost::alloc::vec::Vec<u8>,
+}
+impl ::prost::Name for TokenFactoryPosition {
+    const NAME: &'static str = "TokenFactoryPosition";
     const PACKAGE: &'static str = "penumbra.core.component.tokenfactory.v1alpha";
     fn full_name() -> ::prost::alloc::string::String {
-        "penumbra.core.component.tokenfactory.v1alpha.ActionTokenFactoryCreate".into()
+        "penumbra.core.component.tokenfactory.v1alpha.TokenFactoryPosition".into()
     }
     fn type_url() -> ::prost::alloc::string::String {
-        "/penumbra.core.component.tokenfactory.v1alpha.ActionTokenFactoryCreate".into()
+        "/penumbra.core.component.tokenfactory.v1alpha.TokenFactoryPosition".into()
     }
 }
-/// ActionTokenBurn defines the action for burning a token.
-///
-/// Add fields as needed
-#[derive(Clone, Copy, PartialEq, ::prost::Message)]
-pub struct ActionTokenBurn {}
-impl ::prost::Name for ActionTokenBurn {
-    const NAME: &'static str = "ActionTokenBurn";
+/// TokenFactoryNft defines the NFT for a token factory.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TokenFactoryNft {
+    #[prost(message, optional, tag = "1")]
+    pub token_id: ::core::option::Option<TokenId>,
+    #[prost(message, optional, tag = "2")]
+    pub amount: ::core::option::Option<super::super::super::num::v1::Amount>,
+}
+impl ::prost::Name for TokenFactoryNft {
+    const NAME: &'static str = "TokenFactoryNft";
     const PACKAGE: &'static str = "penumbra.core.component.tokenfactory.v1alpha";
     fn full_name() -> ::prost::alloc::string::String {
-        "penumbra.core.component.tokenfactory.v1alpha.ActionTokenBurn".into()
+        "penumbra.core.component.tokenfactory.v1alpha.TokenFactoryNft".into()
     }
     fn type_url() -> ::prost::alloc::string::String {
-        "/penumbra.core.component.tokenfactory.v1alpha.ActionTokenBurn".into()
+        "/penumbra.core.component.tokenfactory.v1alpha.TokenFactoryNft".into()
+    }
+}
+/// TokenId defines the hash of the id of a token.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TokenId {
+    #[prost(bytes = "vec", tag = "1")]
+    pub inner: ::prost::alloc::vec::Vec<u8>,
+    /// Alternatively, a Bech32m-encoded string representation of the `inner`
+    /// bytes.
+    ///
+    /// NOTE: implementations are not required to support parsing this field.
+    /// Implementations should prefer to encode the bytes in all messages they
+    /// produce. Implementations must not accept messages with both `inner` and
+    /// `alt_bech32m` set.
+    #[prost(string, tag = "2")]
+    pub alt_bech32m: ::prost::alloc::string::String,
+}
+impl ::prost::Name for TokenId {
+    const NAME: &'static str = "TokenId";
+    const PACKAGE: &'static str = "penumbra.core.component.tokenfactory.v1alpha";
+    fn full_name() -> ::prost::alloc::string::String {
+        "penumbra.core.component.tokenfactory.v1alpha.TokenId".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/penumbra.core.component.tokenfactory.v1alpha.TokenId".into()
     }
 }
 /// TokenBurn defines the action for burning a token.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct TokenBurn {
-    #[prost(string, tag = "1")]
-    pub token_id: ::prost::alloc::string::String,
+    #[prost(message, optional, tag = "1")]
+    pub token_id: ::core::option::Option<TokenId>,
+    /// The sequence number of the token factory.
     #[prost(uint64, tag = "2")]
     pub seq: u64,
-    #[prost(uint64, tag = "3")]
-    pub amount: u64,
+    /// The amount of tokens to burn.
+    #[prost(message, optional, tag = "3")]
+    pub amount: ::core::option::Option<super::super::super::num::v1::Amount>,
 }
 impl ::prost::Name for TokenBurn {
     const NAME: &'static str = "TokenBurn";
@@ -79,5 +115,27 @@ impl ::prost::Name for TokenBurn {
     }
     fn type_url() -> ::prost::alloc::string::String {
         "/penumbra.core.component.tokenfactory.v1alpha.TokenBurn".into()
+    }
+}
+/// EventTokenBurn defines the event for burning a token.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct EventTokenBurn {
+    #[prost(message, optional, tag = "1")]
+    pub token_id: ::core::option::Option<TokenId>,
+    /// The sequence number of the token factory.
+    #[prost(uint64, tag = "2")]
+    pub seq: u64,
+    /// The amount of tokens burned.
+    #[prost(message, optional, tag = "3")]
+    pub amount: ::core::option::Option<super::super::super::num::v1::Amount>,
+}
+impl ::prost::Name for EventTokenBurn {
+    const NAME: &'static str = "EventTokenBurn";
+    const PACKAGE: &'static str = "penumbra.core.component.tokenfactory.v1alpha";
+    fn full_name() -> ::prost::alloc::string::String {
+        "penumbra.core.component.tokenfactory.v1alpha.EventTokenBurn".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/penumbra.core.component.tokenfactory.v1alpha.EventTokenBurn".into()
     }
 }

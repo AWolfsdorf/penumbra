@@ -1,5 +1,5 @@
 pub mod create;
-pub mod factory;
+pub mod event;
 pub mod genesis;
 pub mod nft;
 pub mod note_manager;
@@ -8,7 +8,7 @@ pub mod position;
 pub mod state_key;
 
 pub use create::*;
-pub use factory::*;
+pub use event::*;
 pub use nft::*;
 pub use note_manager::*;
 pub use position::*;

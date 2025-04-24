@@ -1,9 +1,11 @@
+use crate::component::{StateReadExt, TokenManager};
+use crate::{event, TokenBurn};
+
 use anyhow::{ensure, Result};
 use async_trait::async_trait;
 use cnidarium::StateWrite;
 use cnidarium_component::ActionHandler;
-
-use crate::{StateReadExt, StateWriteExt, TokenBurn};
+use penumbra_sdk_proto::StateWriteProto;
 
 #[async_trait]
 impl ActionHandler for TokenBurn {
@@ -22,6 +24,8 @@ impl ActionHandler for TokenBurn {
         );
 
         state.burn_token(self.token_id.clone(), self.amount).await?;
+
+        state.record_proto(event::EventTokenBurn::from(self).to_proto());
         Ok(())
     }
 }

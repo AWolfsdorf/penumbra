@@ -292,3 +292,25 @@ pub mod auction_id {
         serialize_bech32(value, serializer, BECH32_PREFIX, Variant::Bech32m)
     }
 }
+
+pub mod tokenfactory {
+    use super::*;
+
+    /// The Bech32 prefix used for token factory IDs.
+    pub const BECH32_PREFIX: &str = "factory_mint";
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<Vec<u8>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserialize_bech32(deserializer, BECH32_PREFIX, Variant::Bech32m)
+    }
+
+    pub fn serialize<S, T>(value: &T, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+        T: AsRef<[u8]>,
+    {
+        serialize_bech32(value, serializer, BECH32_PREFIX, Variant::Bech32m)
+    }
+}
