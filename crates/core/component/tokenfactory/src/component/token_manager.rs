@@ -11,6 +11,7 @@ use crate::TokenId;
 pub trait TokenManager: StateWrite {
     #[instrument(name = "token_manager", skip_all)]
     async fn burn_token(&mut self, token_id: TokenId, amount: Amount) -> Result<()> {
+        // TODO: Implement
         Ok(())
     }
 }

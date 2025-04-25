@@ -58,3 +58,10 @@ message EventTokenBurn {
   // The amount of tokens burned.
   num.v1.Amount amount = 2;
 }
+
+// TokenBurnPlan defines the plan for burning a token.
+message TokenBurnPlan {
+  asset.v1.AssetId asset_id = 1;
+  // The amount to burn.
+  num.v1.Amount amount = 2;
+}

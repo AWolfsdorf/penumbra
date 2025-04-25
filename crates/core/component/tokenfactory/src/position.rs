@@ -1,4 +1,5 @@
 use anyhow::Context;
+use penumbra_sdk_asset::asset;
 use rand_core::CryptoRngCore;
 use penumbra_sdk_proto::{
     core::component::tokenfactory::v1alpha as pb,
@@ -38,6 +39,15 @@ impl TokenFactoryPosition {
 #[derive(PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Serialize, Deserialize)]
 #[serde(try_from = "pb::TokenId", into = "pb::TokenId")]
 pub struct TokenId(pub [u8; 32]);
+
+
+impl From<asset::Id> for TokenId {
+    fn from(asset_id: asset::Id) -> Self {
+        let mut bytes = [0; 32];
+        bytes[0..32].copy_from_slice(&asset_id.to_bytes());
+        TokenId(bytes)
+    }
+}
 
 /* Protobuf impl */
 

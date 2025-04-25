@@ -20,6 +20,8 @@ impl EffectingData for TokenBurn {
     }
 }
 
+/* Protobuf impls */
+
 impl DomainType for TokenBurn {
     type Proto = pb::TokenBurn;
 }

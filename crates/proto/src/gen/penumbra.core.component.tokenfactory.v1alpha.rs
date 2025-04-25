@@ -133,3 +133,22 @@ impl ::prost::Name for EventTokenBurn {
         "/penumbra.core.component.tokenfactory.v1alpha.EventTokenBurn".into()
     }
 }
+/// TokenBurnPlan defines the plan for burning a token.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TokenBurnPlan {
+    #[prost(message, optional, tag = "1")]
+    pub asset_id: ::core::option::Option<super::super::super::asset::v1::AssetId>,
+    /// The amount to burn.
+    #[prost(message, optional, tag = "2")]
+    pub amount: ::core::option::Option<super::super::super::num::v1::Amount>,
+}
+impl ::prost::Name for TokenBurnPlan {
+    const NAME: &'static str = "TokenBurnPlan";
+    const PACKAGE: &'static str = "penumbra.core.component.tokenfactory.v1alpha";
+    fn full_name() -> ::prost::alloc::string::String {
+        "penumbra.core.component.tokenfactory.v1alpha.TokenBurnPlan".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/penumbra.core.component.tokenfactory.v1alpha.TokenBurnPlan".into()
+    }
+}
