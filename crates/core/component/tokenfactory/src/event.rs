@@ -1,10 +1,12 @@
-use crate::TokenBurn;
-use penumbra_sdk_proto::{penumbra::core::component::tokenfactory::v1 as pb, DomainType};
+use penumbra_sdk_num::Amount;
+use penumbra_sdk_proto::{core::component::tokenfactory::v1alpha as pb, DomainType};
+
+use crate::{TokenBurn, TokenId};
 
 #[derive(Debug, Clone)]
 pub struct EventTokenBurn {
-    pub token_id: String,
-    pub amount: u64,
+    pub token_id: TokenId,
+    pub amount: Amount,
 }
 
 impl From<TokenBurn> for EventTokenBurn {
@@ -16,8 +18,23 @@ impl From<TokenBurn> for EventTokenBurn {
 impl From<&TokenBurn> for EventTokenBurn {
     fn from(value: &TokenBurn) -> Self {
         Self {
-            token_id: value.token_id.clone(),
+            token_id: value.token_id,
             amount: value.amount,
+        }
+    }
+}
+
+/* Protobuf impls */
+
+impl DomainType for EventTokenBurn {
+    type Proto = pb::EventTokenBurn;
+}
+
+impl From<EventTokenBurn> for pb::EventTokenBurn {
+    fn from(value: EventTokenBurn) -> Self {
+        Self {
+            token_id: Some(value.token_id.into()),
+            amount: Some(value.amount.into()),
         }
     }
 }
@@ -27,26 +44,14 @@ impl TryFrom<pb::EventTokenBurn> for EventTokenBurn {
 
     fn try_from(value: pb::EventTokenBurn) -> Result<Self, Self::Error> {
         Ok(Self {
-            token_id: value.token_id,
-            amount: value.amount,
+            token_id: value
+                .token_id
+                .ok_or_else(|| anyhow::anyhow!("missing token id"))?
+                .try_into()?,
+            amount: value
+                .amount
+                .ok_or_else(|| anyhow::anyhow!("missing amount"))?
+                .try_into()?,
         })
     }
-}
-
-impl TryFrom<pb::EventTokenBurn> for EventTokenBurn {
-    type Error = anyhow::Error;
-
-    fn try_from(value: pb::EventTokenBurn) -> Result<Self, Self::Error> {
-        fn inner(value: pb::EventTokenBurn) -> anyhow::Result<EventTokenBurn> {
-            Ok(EventTokenBurn {
-                token_id: value..token_id,
-                amount: value.amount,
-            })
-        }
-        inner(value).context(format!("parsing {}", pb::EventTokenBurn::NAME))
-    }
-}
-
-impl DomainType for EventTokenBurn {
-    type Proto = pb::EventTokenBurn;
 }

@@ -5,7 +5,7 @@ use anyhow::{ensure, Result};
 use async_trait::async_trait;
 use cnidarium::StateWrite;
 use cnidarium_component::ActionHandler;
-use penumbra_sdk_proto::StateWriteProto;
+use penumbra_sdk_proto::{DomainType, StateWriteProto};
 
 #[async_trait]
 impl ActionHandler for TokenBurn {

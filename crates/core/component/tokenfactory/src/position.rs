@@ -1,7 +1,11 @@
+use anyhow::Context;
 use rand_core::CryptoRngCore;
+use penumbra_sdk_proto::{
+    core::component::tokenfactory::v1alpha as pb,
+    DomainType,
+    serializers::bech32str
+};
 
-use penumbra_sdk_proto::core::component::tokenfactory::v1alpha as pb;
-use penumbra_sdk_proto::serializers::bech32str;
 use serde::{Deserialize, Serialize};
 
 pub struct TokenFactoryPosition {
@@ -35,6 +39,42 @@ impl TokenFactoryPosition {
 #[serde(try_from = "pb::TokenId", into = "pb::TokenId")]
 pub struct TokenId(pub [u8; 32]);
 
+/* Protobuf impl */
+
+impl DomainType for TokenId {
+    type Proto = pb::TokenId;
+}
+
+impl From<TokenId> for pb::TokenId {
+    fn from(domain: TokenId) -> Self {
+        Self {
+            inner: domain.0.to_vec(),
+            // Never produce a proto encoding with the alt field set.
+            alt_bech32m: String::new(),
+        }
+    }
+}
+
+impl TryFrom<pb::TokenId> for TokenId {
+    type Error = anyhow::Error;
+
+    fn try_from(msg: pb::TokenId) -> Result<Self, Self::Error> {
+        match (msg.inner.is_empty(), msg.alt_bech32m.is_empty()) {
+            (false, true) => Ok(TokenId(msg
+                .inner
+                .as_slice()
+                .try_into()
+                .context("expected 32-byte id")?)),
+            (true, false) => msg.alt_bech32m.parse(),
+            (false, false) => Err(anyhow::anyhow!(
+                "AssetId proto has both inner and alt_bech32m fields set"
+            )),
+            (true, true) => Err(anyhow::anyhow!(
+                "AssetId proto has neither inner nor alt_bech32m fields set"
+            )),
+        }
+    }
+}
 impl std::fmt::Debug for TokenId {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(&bech32str::encode(

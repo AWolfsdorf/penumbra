@@ -3,6 +3,7 @@ syntax = "proto3";
 package penumbra.core.component.tokenfactory.v1alpha;
 
 import "penumbra/core/num/v1/num.proto";
+import "penumbra/core/asset/v1/asset.proto";
 
 // TokenFactoryParameters defines the parameters for the tokenfactory component.
 message TokenFactoryParameters {
@@ -27,7 +28,7 @@ message TokenFactoryPosition {
 // TokenFactoryNft defines the NFT for a token factory.
 message TokenFactoryNft {
   TokenId token_id = 1;
-  num.v1.Amount amount = 2;
+  uint64 seq = 2;
 }
 
 // TokenId defines the hash of the id of a token.
@@ -47,17 +48,13 @@ message TokenId {
 // TokenBurn defines the action for burning a token.
 message TokenBurn {
   TokenId token_id = 1;
-  // The sequence number of the token factory.
-  uint64 seq = 2;
   // The amount of tokens to burn.
-  num.v1.Amount amount = 3;
+  num.v1.Amount amount = 2;
 }
 
 // EventTokenBurn defines the event for burning a token.
 message EventTokenBurn {
   TokenId token_id = 1;
-  // The sequence number of the token factory.
-  uint64 seq = 2;
   // The amount of tokens burned.
-  num.v1.Amount amount = 3;
+  num.v1.Amount amount = 2;
 }

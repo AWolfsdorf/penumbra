@@ -1,9 +1,10 @@
-use penumbra_sdk_asset::asset;
-use penumbra_sdk_proto::serializers::bech32str;
+use penumbra_sdk_asset::asset::{self, Metadata};
+use anyhow::Result;
 use regex::Regex;
-use serde::{Deserialize, Serialize};
 
-use penumbra_sdk_proto::core::component::tokenfactory::v1alpha as pb;
+use penumbra_sdk_proto::{core::component::tokenfactory::v1alpha as pb, DomainType};
+
+use crate::TokenId;
 
 /// A token factory NFT represents minting rights for a token created through the token factory.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -38,31 +39,38 @@ impl TokenFactoryNft {
     }
 }
 
-impl std::fmt::Display for TokenFactoryNft {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "factory_mint_{}_{}", self.seq, self.token_id)
-    }
+/* Protobuf impls */
+impl DomainType for TokenFactoryNft {
+    type Proto = pb::TokenFactoryNft;
 }
 
-impl std::str::FromStr for TokenFactoryNft {
-    type Err = anyhow::Error;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let parts: Vec<&str> = s.split('_').collect();
-        if parts.len() != 4 || parts[0] != "factory" || parts[1] != "mint" {
-            return Err(anyhow::anyhow!("invalid token factory NFT format"));
+impl From<TokenFactoryNft> for pb::TokenFactoryNft {
+    fn from(domain: TokenFactoryNft) -> Self {
+        Self {
+            token_id: Some(domain.token_id.into()),
+            seq: domain.seq,
         }
-        let sequence = parts[2].parse()?;
-        let token_id = parts[3].parse()?;
-        Ok(Self::new(token_id, sequence))
     }
 }
 
-impl TryFrom<asset::Metadata> for TokenFactoryNft {
+impl TryFrom<pb::TokenFactoryNft> for TokenFactoryNft {
     type Error = anyhow::Error;
 
-    fn try_from(denom: asset::Metadata) -> Result<Self, Self::Error> {
-        let regex = Regex::new(r"factory_mint_(\d+)_(.+)").expect("regex is valid");
+    fn try_from(msg: pb::TokenFactoryNft) -> Result<Self, Self::Error> {
+        let token_id: TokenId = msg
+            .token_id
+            .ok_or_else(|| anyhow::anyhow!("TokenFactoryNft message is missing a token id"))?
+            .try_into()?;
+        let seq = msg.seq;
+        Ok(TokenFactoryNft::new(token_id, seq))
+    }
+}
+
+impl TryFrom<Metadata> for TokenFactoryNft {
+    type Error = anyhow::Error;
+
+    fn try_from(denom: Metadata) -> Result<Self, Self::Error> {
+        let regex = Regex::new(r"factory_mint_(?P<seq_num>[0-9]+)_(?P<token_id>[a-zA-HJ-NP-Z0-9]+)$").expect("regex is valid");
 
         let denom_string = denom.to_string();
 
@@ -70,14 +78,31 @@ impl TryFrom<asset::Metadata> for TokenFactoryNft {
             .captures(&denom_string)
             .ok_or_else(|| anyhow::anyhow!("invalid token factory NFT format"))?;
 
-        let sequence = captures
-            .get(1)
-            .ok_or_else(|| anyhow::anyhow!("sequence not found"))?
-            .as_str()
-            .parse()?;
         let token_id = captures
+            .name("token_id")
+            .ok_or_else(|| anyhow::anyhow!("token id not found"))?
+            .as_str();
 
-        Ok(TokenFactoryNft::new(token_id, sequence))
+        let seq_num = captures
+            .name("seq_num")
+            .ok_or_else(|| anyhow::anyhow!("sequence not found"))?
+            .as_str();
+
+        let seq_num: u64 = seq_num
+            .parse()
+            .map_err(|_| anyhow::anyhow!("Failed to parse seq_num to u64"))?;
+
+        let token_id: TokenId = token_id
+            .parse()
+            .map_err(|_| anyhow::anyhow!("Failed to parse token_id to TokenId"))?;
+
+        Ok(Self::new(token_id, seq_num))
+    }
+}
+
+impl std::fmt::Display for TokenFactoryNft {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "factory_mint_{}_{}", self.seq, self.token_id)
     }
 }
 

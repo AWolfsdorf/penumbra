@@ -57,8 +57,8 @@ impl ::prost::Name for TokenFactoryPosition {
 pub struct TokenFactoryNft {
     #[prost(message, optional, tag = "1")]
     pub token_id: ::core::option::Option<TokenId>,
-    #[prost(message, optional, tag = "2")]
-    pub amount: ::core::option::Option<super::super::super::num::v1::Amount>,
+    #[prost(uint64, tag = "2")]
+    pub seq: u64,
 }
 impl ::prost::Name for TokenFactoryNft {
     const NAME: &'static str = "TokenFactoryNft";
@@ -100,11 +100,8 @@ impl ::prost::Name for TokenId {
 pub struct TokenBurn {
     #[prost(message, optional, tag = "1")]
     pub token_id: ::core::option::Option<TokenId>,
-    /// The sequence number of the token factory.
-    #[prost(uint64, tag = "2")]
-    pub seq: u64,
     /// The amount of tokens to burn.
-    #[prost(message, optional, tag = "3")]
+    #[prost(message, optional, tag = "2")]
     pub amount: ::core::option::Option<super::super::super::num::v1::Amount>,
 }
 impl ::prost::Name for TokenBurn {
@@ -122,11 +119,8 @@ impl ::prost::Name for TokenBurn {
 pub struct EventTokenBurn {
     #[prost(message, optional, tag = "1")]
     pub token_id: ::core::option::Option<TokenId>,
-    /// The sequence number of the token factory.
-    #[prost(uint64, tag = "2")]
-    pub seq: u64,
     /// The amount of tokens burned.
-    #[prost(message, optional, tag = "3")]
+    #[prost(message, optional, tag = "2")]
     pub amount: ::core::option::Option<super::super::super::num::v1::Amount>,
 }
 impl ::prost::Name for EventTokenBurn {

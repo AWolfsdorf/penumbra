@@ -9,20 +9,12 @@ impl serde::Serialize for EventTokenBurn {
         if self.token_id.is_some() {
             len += 1;
         }
-        if self.seq != 0 {
-            len += 1;
-        }
         if self.amount.is_some() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("penumbra.core.component.tokenfactory.v1alpha.EventTokenBurn", len)?;
         if let Some(v) = self.token_id.as_ref() {
             struct_ser.serialize_field("tokenId", v)?;
-        }
-        if self.seq != 0 {
-            #[allow(clippy::needless_borrow)]
-            #[allow(clippy::needless_borrows_for_generic_args)]
-            struct_ser.serialize_field("seq", ToString::to_string(&self.seq).as_str())?;
         }
         if let Some(v) = self.amount.as_ref() {
             struct_ser.serialize_field("amount", v)?;
@@ -39,14 +31,12 @@ impl<'de> serde::Deserialize<'de> for EventTokenBurn {
         const FIELDS: &[&str] = &[
             "token_id",
             "tokenId",
-            "seq",
             "amount",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             TokenId,
-            Seq,
             Amount,
             __SkipField__,
         }
@@ -71,7 +61,6 @@ impl<'de> serde::Deserialize<'de> for EventTokenBurn {
                     {
                         match value {
                             "tokenId" | "token_id" => Ok(GeneratedField::TokenId),
-                            "seq" => Ok(GeneratedField::Seq),
                             "amount" => Ok(GeneratedField::Amount),
                             _ => Ok(GeneratedField::__SkipField__),
                         }
@@ -93,7 +82,6 @@ impl<'de> serde::Deserialize<'de> for EventTokenBurn {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut token_id__ = None;
-                let mut seq__ = None;
                 let mut amount__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
@@ -102,14 +90,6 @@ impl<'de> serde::Deserialize<'de> for EventTokenBurn {
                                 return Err(serde::de::Error::duplicate_field("tokenId"));
                             }
                             token_id__ = map_.next_value()?;
-                        }
-                        GeneratedField::Seq => {
-                            if seq__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("seq"));
-                            }
-                            seq__ = 
-                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
-                            ;
                         }
                         GeneratedField::Amount => {
                             if amount__.is_some() {
@@ -124,7 +104,6 @@ impl<'de> serde::Deserialize<'de> for EventTokenBurn {
                 }
                 Ok(EventTokenBurn {
                     token_id: token_id__,
-                    seq: seq__.unwrap_or_default(),
                     amount: amount__,
                 })
             }
@@ -239,20 +218,12 @@ impl serde::Serialize for TokenBurn {
         if self.token_id.is_some() {
             len += 1;
         }
-        if self.seq != 0 {
-            len += 1;
-        }
         if self.amount.is_some() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("penumbra.core.component.tokenfactory.v1alpha.TokenBurn", len)?;
         if let Some(v) = self.token_id.as_ref() {
             struct_ser.serialize_field("tokenId", v)?;
-        }
-        if self.seq != 0 {
-            #[allow(clippy::needless_borrow)]
-            #[allow(clippy::needless_borrows_for_generic_args)]
-            struct_ser.serialize_field("seq", ToString::to_string(&self.seq).as_str())?;
         }
         if let Some(v) = self.amount.as_ref() {
             struct_ser.serialize_field("amount", v)?;
@@ -269,15 +240,128 @@ impl<'de> serde::Deserialize<'de> for TokenBurn {
         const FIELDS: &[&str] = &[
             "token_id",
             "tokenId",
-            "seq",
             "amount",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             TokenId,
-            Seq,
             Amount,
+            __SkipField__,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "tokenId" | "token_id" => Ok(GeneratedField::TokenId),
+                            "amount" => Ok(GeneratedField::Amount),
+                            _ => Ok(GeneratedField::__SkipField__),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = TokenBurn;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct penumbra.core.component.tokenfactory.v1alpha.TokenBurn")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<TokenBurn, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut token_id__ = None;
+                let mut amount__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::TokenId => {
+                            if token_id__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("tokenId"));
+                            }
+                            token_id__ = map_.next_value()?;
+                        }
+                        GeneratedField::Amount => {
+                            if amount__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("amount"));
+                            }
+                            amount__ = map_.next_value()?;
+                        }
+                        GeneratedField::__SkipField__ => {
+                            let _ = map_.next_value::<serde::de::IgnoredAny>()?;
+                        }
+                    }
+                }
+                Ok(TokenBurn {
+                    token_id: token_id__,
+                    amount: amount__,
+                })
+            }
+        }
+        deserializer.deserialize_struct("penumbra.core.component.tokenfactory.v1alpha.TokenBurn", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for TokenFactoryNft {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.token_id.is_some() {
+            len += 1;
+        }
+        if self.seq != 0 {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("penumbra.core.component.tokenfactory.v1alpha.TokenFactoryNft", len)?;
+        if let Some(v) = self.token_id.as_ref() {
+            struct_ser.serialize_field("tokenId", v)?;
+        }
+        if self.seq != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("seq", ToString::to_string(&self.seq).as_str())?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for TokenFactoryNft {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "token_id",
+            "tokenId",
+            "seq",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            TokenId,
+            Seq,
             __SkipField__,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
@@ -302,130 +386,6 @@ impl<'de> serde::Deserialize<'de> for TokenBurn {
                         match value {
                             "tokenId" | "token_id" => Ok(GeneratedField::TokenId),
                             "seq" => Ok(GeneratedField::Seq),
-                            "amount" => Ok(GeneratedField::Amount),
-                            _ => Ok(GeneratedField::__SkipField__),
-                        }
-                    }
-                }
-                deserializer.deserialize_identifier(GeneratedVisitor)
-            }
-        }
-        struct GeneratedVisitor;
-        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = TokenBurn;
-
-            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct penumbra.core.component.tokenfactory.v1alpha.TokenBurn")
-            }
-
-            fn visit_map<V>(self, mut map_: V) -> std::result::Result<TokenBurn, V::Error>
-                where
-                    V: serde::de::MapAccess<'de>,
-            {
-                let mut token_id__ = None;
-                let mut seq__ = None;
-                let mut amount__ = None;
-                while let Some(k) = map_.next_key()? {
-                    match k {
-                        GeneratedField::TokenId => {
-                            if token_id__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("tokenId"));
-                            }
-                            token_id__ = map_.next_value()?;
-                        }
-                        GeneratedField::Seq => {
-                            if seq__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("seq"));
-                            }
-                            seq__ = 
-                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
-                            ;
-                        }
-                        GeneratedField::Amount => {
-                            if amount__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("amount"));
-                            }
-                            amount__ = map_.next_value()?;
-                        }
-                        GeneratedField::__SkipField__ => {
-                            let _ = map_.next_value::<serde::de::IgnoredAny>()?;
-                        }
-                    }
-                }
-                Ok(TokenBurn {
-                    token_id: token_id__,
-                    seq: seq__.unwrap_or_default(),
-                    amount: amount__,
-                })
-            }
-        }
-        deserializer.deserialize_struct("penumbra.core.component.tokenfactory.v1alpha.TokenBurn", FIELDS, GeneratedVisitor)
-    }
-}
-impl serde::Serialize for TokenFactoryNft {
-    #[allow(deprecated)]
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        use serde::ser::SerializeStruct;
-        let mut len = 0;
-        if self.token_id.is_some() {
-            len += 1;
-        }
-        if self.amount.is_some() {
-            len += 1;
-        }
-        let mut struct_ser = serializer.serialize_struct("penumbra.core.component.tokenfactory.v1alpha.TokenFactoryNft", len)?;
-        if let Some(v) = self.token_id.as_ref() {
-            struct_ser.serialize_field("tokenId", v)?;
-        }
-        if let Some(v) = self.amount.as_ref() {
-            struct_ser.serialize_field("amount", v)?;
-        }
-        struct_ser.end()
-    }
-}
-impl<'de> serde::Deserialize<'de> for TokenFactoryNft {
-    #[allow(deprecated)]
-    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        const FIELDS: &[&str] = &[
-            "token_id",
-            "tokenId",
-            "amount",
-        ];
-
-        #[allow(clippy::enum_variant_names)]
-        enum GeneratedField {
-            TokenId,
-            Amount,
-            __SkipField__,
-        }
-        impl<'de> serde::Deserialize<'de> for GeneratedField {
-            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
-            where
-                D: serde::Deserializer<'de>,
-            {
-                struct GeneratedVisitor;
-
-                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-                    type Value = GeneratedField;
-
-                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                        write!(formatter, "expected one of: {:?}", &FIELDS)
-                    }
-
-                    #[allow(unused_variables)]
-                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
-                    where
-                        E: serde::de::Error,
-                    {
-                        match value {
-                            "tokenId" | "token_id" => Ok(GeneratedField::TokenId),
-                            "amount" => Ok(GeneratedField::Amount),
                             _ => Ok(GeneratedField::__SkipField__),
                         }
                     }
@@ -446,7 +406,7 @@ impl<'de> serde::Deserialize<'de> for TokenFactoryNft {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut token_id__ = None;
-                let mut amount__ = None;
+                let mut seq__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::TokenId => {
@@ -455,11 +415,13 @@ impl<'de> serde::Deserialize<'de> for TokenFactoryNft {
                             }
                             token_id__ = map_.next_value()?;
                         }
-                        GeneratedField::Amount => {
-                            if amount__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("amount"));
+                        GeneratedField::Seq => {
+                            if seq__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("seq"));
                             }
-                            amount__ = map_.next_value()?;
+                            seq__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
                         }
                         GeneratedField::__SkipField__ => {
                             let _ = map_.next_value::<serde::de::IgnoredAny>()?;
@@ -468,7 +430,7 @@ impl<'de> serde::Deserialize<'de> for TokenFactoryNft {
                 }
                 Ok(TokenFactoryNft {
                     token_id: token_id__,
-                    amount: amount__,
+                    seq: seq__.unwrap_or_default(),
                 })
             }
         }
