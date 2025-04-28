@@ -269,6 +269,7 @@ impl Transaction {
                 | Action::PositionOpen(_)
                 | Action::PositionClose(_)
                 | Action::PositionWithdraw(_)
+                | Action::TokenBurn(_)
                 | Action::Ics20Withdrawal(_)
                 | Action::CommunityPoolSpend(_)
                 | Action::CommunityPoolOutput(_)

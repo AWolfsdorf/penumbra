@@ -99,6 +99,7 @@ impl AppActionHandler for ProposalSubmit {
                         | PositionOpen(_)
                         | PositionClose(_)
                         | PositionWithdraw(_)
+                        | TokenBurn(_)
                         | CommunityPoolSpend(_)
                         | CommunityPoolOutput(_)
                         | Ics20Withdrawal(_)

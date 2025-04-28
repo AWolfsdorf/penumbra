@@ -49,6 +49,12 @@ impl From<asset::Id> for TokenId {
     }
 }
 
+impl From<TokenId> for asset::Id {
+    fn from(token_id: TokenId) -> Self {
+        asset::Id::try_from(token_id.0).unwrap()
+    }
+}
+
 /* Protobuf impl */
 
 impl DomainType for TokenId {

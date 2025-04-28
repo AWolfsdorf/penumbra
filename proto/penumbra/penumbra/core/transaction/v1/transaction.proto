@@ -12,6 +12,7 @@ import "penumbra/core/component/ibc/v1/ibc.proto";
 import "penumbra/core/component/sct/v1/sct.proto";
 import "penumbra/core/component/shielded_pool/v1/shielded_pool.proto";
 import "penumbra/core/component/stake/v1/stake.proto";
+import "penumbra/core/component/tokenfactory/v1alpha/tokenfactory.proto";
 import "penumbra/core/keys/v1/keys.proto";
 import "penumbra/core/txhash/v1/txhash.proto";
 import "penumbra/crypto/decaf377_fmd/v1/decaf377_fmd.proto";
@@ -97,6 +98,9 @@ message Action {
     component.dex.v1.PositionClose position_close = 31;
     component.dex.v1.PositionWithdraw position_withdraw = 32;
     component.dex.v1.PositionRewardClaim position_reward_claim = 34 [deprecated = true];
+
+    // TokenBurn
+    component.tokenfactory.v1alpha.TokenBurn token_burn = 35;
 
     // (un)delegation
     component.stake.v1.Delegate delegate = 40;
@@ -230,6 +234,9 @@ message ActionView {
     component.dex.v1.PositionWithdraw position_withdraw = 32;
     component.dex.v1.PositionRewardClaim position_reward_claim = 34 [deprecated = true];
 
+    // TokenBurn
+    component.tokenfactory.v1alpha.TokenBurn token_burn = 35;
+
     component.stake.v1.Delegate delegate = 41;
     component.stake.v1.Undelegate undelegate = 42;
     // Community Pool
@@ -333,6 +340,9 @@ message ActionPlan {
     // because we don't yet use flow encryption.
     component.stake.v1.Undelegate undelegate = 41;
     component.stake.v1.UndelegateClaimPlan undelegate_claim = 42;
+
+    // TokenBurn
+    component.tokenfactory.v1alpha.TokenBurnPlan token_burn = 43;
 
     // Community Pool
     component.governance.v1.CommunityPoolSpend community_pool_spend = 50;

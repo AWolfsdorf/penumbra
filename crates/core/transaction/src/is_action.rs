@@ -24,6 +24,7 @@ use penumbra_sdk_governance::{
 use penumbra_sdk_ibc::IbcRelay;
 use penumbra_sdk_shielded_pool::{Ics20Withdrawal, Note, Output, OutputView, Spend, SpendView};
 use penumbra_sdk_stake::{Delegate, Undelegate, UndelegateClaim};
+use penumbra_sdk_tokenfactory::TokenBurn;
 
 use crate::{Action, ActionView, TransactionPerspective};
 
@@ -312,6 +313,20 @@ impl IsAction for PositionWithdraw {
 
     fn view_from_perspective(&self, _txp: &TransactionPerspective) -> ActionView {
         ActionView::PositionWithdraw(self.to_owned())
+    }
+}
+
+impl IsAction for TokenBurn {
+    fn balance_commitment(&self) -> balance::Commitment {
+        Value {
+            amount: self.amount,
+            asset_id: self.token_id.into(),
+        }
+        .commit(Fr::zero())
+    }
+
+    fn view_from_perspective(&self, _txp: &TransactionPerspective) -> ActionView {
+        ActionView::TokenBurn(self.to_owned())
     }
 }
 

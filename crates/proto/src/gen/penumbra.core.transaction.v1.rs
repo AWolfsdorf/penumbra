@@ -139,7 +139,7 @@ impl ::prost::Name for DetectionData {
 pub struct Action {
     #[prost(
         oneof = "action::Action",
-        tags = "1, 2, 3, 4, 16, 17, 18, 19, 20, 21, 22, 30, 31, 32, 34, 40, 41, 42, 50, 51, 52, 53, 54, 55, 70, 200"
+        tags = "1, 2, 3, 4, 16, 17, 18, 19, 20, 21, 22, 30, 31, 32, 34, 35, 40, 41, 42, 50, 51, 52, 53, 54, 55, 70, 200"
     )]
     pub action: ::core::option::Option<action::Action>,
 }
@@ -188,6 +188,9 @@ pub mod action {
         PositionRewardClaim(
             super::super::super::component::dex::v1::PositionRewardClaim,
         ),
+        /// TokenBurn
+        #[prost(message, tag = "35")]
+        TokenBurn(super::super::super::component::tokenfactory::v1alpha::TokenBurn),
         /// (un)delegation
         #[prost(message, tag = "40")]
         Delegate(super::super::super::component::stake::v1::Delegate),
@@ -467,7 +470,7 @@ impl ::prost::Name for TransactionBodyView {
 pub struct ActionView {
     #[prost(
         oneof = "action_view::ActionView",
-        tags = "1, 2, 3, 4, 21, 16, 17, 18, 19, 20, 22, 30, 31, 32, 34, 41, 42, 50, 51, 52, 53, 54, 55, 43, 70, 200"
+        tags = "1, 2, 3, 4, 21, 16, 17, 18, 19, 20, 22, 30, 31, 32, 34, 35, 41, 42, 50, 51, 52, 53, 54, 55, 43, 70, 200"
     )]
     pub action_view: ::core::option::Option<action_view::ActionView>,
 }
@@ -516,6 +519,9 @@ pub mod action_view {
         PositionRewardClaim(
             super::super::super::component::dex::v1::PositionRewardClaim,
         ),
+        /// TokenBurn
+        #[prost(message, tag = "35")]
+        TokenBurn(super::super::super::component::tokenfactory::v1alpha::TokenBurn),
         #[prost(message, tag = "41")]
         Delegate(super::super::super::component::stake::v1::Delegate),
         #[prost(message, tag = "42")]
@@ -679,7 +685,7 @@ impl ::prost::Name for DetectionDataPlan {
 pub struct ActionPlan {
     #[prost(
         oneof = "action_plan::Action",
-        tags = "1, 2, 3, 4, 16, 17, 18, 19, 20, 21, 22, 200, 30, 31, 32, 34, 40, 41, 42, 50, 51, 52, 53, 54, 55, 70"
+        tags = "1, 2, 3, 4, 16, 17, 18, 19, 20, 21, 22, 200, 30, 31, 32, 34, 40, 41, 42, 43, 50, 51, 52, 53, 54, 55, 70"
     )]
     pub action: ::core::option::Option<action_plan::Action>,
 }
@@ -741,6 +747,9 @@ pub mod action_plan {
         Undelegate(super::super::super::component::stake::v1::Undelegate),
         #[prost(message, tag = "42")]
         UndelegateClaim(super::super::super::component::stake::v1::UndelegateClaimPlan),
+        /// TokenBurn
+        #[prost(message, tag = "43")]
+        TokenBurn(super::super::super::component::tokenfactory::v1alpha::TokenBurnPlan),
         /// Community Pool
         #[prost(message, tag = "50")]
         CommunityPoolSpend(

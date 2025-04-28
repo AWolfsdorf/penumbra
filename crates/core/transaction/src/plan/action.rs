@@ -9,6 +9,7 @@ use penumbra_sdk_auction::auction::dutch::actions::ActionDutchAuctionSchedule;
 use penumbra_sdk_auction::auction::dutch::actions::ActionDutchAuctionWithdrawPlan;
 use penumbra_sdk_community_pool::{CommunityPoolDeposit, CommunityPoolOutput, CommunityPoolSpend};
 use penumbra_sdk_funding::liquidity_tournament::ActionLiquidityTournamentVotePlan;
+use penumbra_sdk_tokenfactory::TokenBurnPlan;
 use penumbra_sdk_txhash::{EffectHash, EffectingData};
 
 use penumbra_sdk_dex::{
@@ -73,6 +74,9 @@ pub enum ActionPlan {
     // PositionWithdrawPlan requires the balance of the funds to be withdrawn, so
     // a plan must be used.
     PositionWithdraw(PositionWithdrawPlan),
+
+    /// Token factory actions
+    TokenBurn(TokenBurnPlan),
 
     CommunityPoolSpend(CommunityPoolSpend),
     CommunityPoolOutput(CommunityPoolOutput),
@@ -159,6 +163,7 @@ impl ActionPlan {
             PositionOpen(plan) => Action::PositionOpen(plan.clone()),
             PositionClose(plan) => Action::PositionClose(plan.clone()),
             PositionWithdraw(plan) => Action::PositionWithdraw(plan.position_withdraw()),
+            TokenBurn(plan) => Action::TokenBurn(plan.to_action()),
             CommunityPoolSpend(plan) => Action::CommunityPoolSpend(plan.clone()),
             CommunityPoolOutput(plan) => Action::CommunityPoolOutput(plan.clone()),
             CommunityPoolDeposit(plan) => Action::CommunityPoolDeposit(plan.clone()),
@@ -211,6 +216,7 @@ impl ActionPlan {
             ActionPlan::ActionDutchAuctionEnd(_) => 54,
             ActionPlan::ActionDutchAuctionWithdraw(_) => 55,
             ActionPlan::ActionLiquidityTournamentVote(_) => 70,
+            ActionPlan::TokenBurn(_) => 80,
         }
     }
 
@@ -235,6 +241,7 @@ impl ActionPlan {
             PositionOpen(position_open) => position_open.balance(),
             PositionClose(position_close) => position_close.balance(),
             PositionWithdraw(position_withdraw) => position_withdraw.balance(),
+            TokenBurn(token_burn) => token_burn.balance(),
             Ics20Withdrawal(withdrawal) => withdrawal.balance(),
             ActionDutchAuctionSchedule(action) => action.balance(),
             ActionDutchAuctionEnd(action) => action.balance(),
@@ -260,6 +267,7 @@ impl ActionPlan {
             ValidatorDefinition(_) => Fr::zero(),
             Swap(swap) => swap.fee_blinding,
             SwapClaim(_) => Fr::zero(),
+            TokenBurn(_) => Fr::zero(),
             IbcAction(_) => Fr::zero(),
             ProposalSubmit(_) => Fr::zero(),
             ProposalWithdraw(_) => Fr::zero(),
@@ -302,6 +310,7 @@ impl ActionPlan {
             PositionOpen(plan) => plan.effect_hash(),
             PositionClose(plan) => plan.effect_hash(),
             PositionWithdraw(plan) => plan.position_withdraw().effect_hash(),
+            TokenBurn(plan) => plan.to_action().effect_hash(),
             CommunityPoolSpend(plan) => plan.effect_hash(),
             CommunityPoolOutput(plan) => plan.effect_hash(),
             CommunityPoolDeposit(plan) => plan.effect_hash(),
@@ -530,6 +539,9 @@ impl From<ActionPlan> for pb_t::ActionPlan {
                     inner
                 ))),
             },
+            ActionPlan::TokenBurn(inner) => pb_t::ActionPlan {
+                action: Some(pb_t::action_plan::Action::TokenBurn(inner.into())),
+            },
             ActionPlan::CommunityPoolDeposit(inner) => pb_t::ActionPlan {
                 action: Some(pb_t::action_plan::Action::CommunityPoolDeposit(
                     inner.into(),
@@ -645,6 +657,9 @@ impl TryFrom<pb_t::ActionPlan> for ActionPlan {
             }
             pb_t::action_plan::Action::ActionDutchAuctionWithdraw(inner) => {
                 Ok(ActionPlan::ActionDutchAuctionWithdraw(inner.try_into()?))
+            }
+            pb_t::action_plan::Action::TokenBurn(inner) => {
+                Ok(ActionPlan::TokenBurn(inner.try_into()?))
             }
             pb_t::action_plan::Action::Ics20Withdrawal(inner) => {
                 Ok(ActionPlan::Ics20Withdrawal(inner.try_into()?))

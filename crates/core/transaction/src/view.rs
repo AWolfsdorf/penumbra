@@ -699,6 +699,7 @@ mod test {
             ActionPlan::PositionOpen(_) => None,
             ActionPlan::PositionClose(_) => None,
             ActionPlan::PositionWithdraw(_) => None,
+            ActionPlan::TokenBurn(_) => None,
             ActionPlan::Delegate(_) => None,
             ActionPlan::Undelegate(_) => None,
             ActionPlan::UndelegateClaim(_) => None,

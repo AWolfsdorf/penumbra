@@ -16,6 +16,7 @@ use penumbra_sdk_stake::{
 use penumbra_sdk_governance::{
     DelegatorVote, ProposalDepositClaim, ProposalSubmit, ProposalWithdraw, ValidatorVote,
 };
+use penumbra_sdk_tokenfactory::TokenBurn;
 
 use crate::{
     plan::{ActionPlan, TransactionPlan},
@@ -249,6 +250,24 @@ fn position_withdraw_gas_cost() -> Gas {
     }
 }
 
+fn token_burn_gas_cost() -> Gas {
+    Gas {
+        // TokenId `token_id` = 32 bytes
+        // Amount `amount` = 16 bytes
+
+        // The block space measured as the byte length of the encoded action.
+        block_space: 48,
+        // The compact block space cost is based on the byte size of the data the [`Action`] adds
+        // to the compact block.
+        // For a TokenBurn the compact block is not modified.
+        compact_block_space: 0,
+        // There are some small validations performed so a token amount of gas is charged.
+        verification: 50,
+        // Execution cost is currently hardcoded at 10 for all `Action`` variants.
+        execution: 10,
+    }
+}
+
 fn dutch_auction_schedule_gas_cost(dutch_action_schedule: &ActionDutchAuctionSchedule) -> Gas {
     Gas {
         // penumbra.core.asset.v1.Value `input` = 48 bytes
@@ -367,6 +386,7 @@ impl GasCost for ActionPlan {
             ActionPlan::ProposalDepositClaim(pdc) => pdc.gas_cost(),
             ActionPlan::PositionOpen(po) => po.gas_cost(),
             ActionPlan::PositionClose(pc) => pc.gas_cost(),
+            ActionPlan::TokenBurn(tb) => tb.to_action().gas_cost(),
             ActionPlan::CommunityPoolSpend(ds) => ds.gas_cost(),
             ActionPlan::CommunityPoolOutput(d) => d.gas_cost(),
             ActionPlan::CommunityPoolDeposit(dd) => dd.gas_cost(),
@@ -394,6 +414,7 @@ impl GasCost for Action {
             Action::PositionOpen(p) => p.gas_cost(),
             Action::PositionClose(p) => p.gas_cost(),
             Action::PositionWithdraw(p) => p.gas_cost(),
+            Action::TokenBurn(burn) => burn.gas_cost(),
             Action::Ics20Withdrawal(withdrawal) => withdrawal.gas_cost(),
             Action::CommunityPoolDeposit(deposit) => deposit.gas_cost(),
             Action::CommunityPoolSpend(spend) => spend.gas_cost(),
@@ -574,6 +595,12 @@ impl GasCost for PositionClose {
 impl GasCost for PositionWithdraw {
     fn gas_cost(&self) -> Gas {
         position_withdraw_gas_cost()
+    }
+}
+
+impl GasCost for TokenBurn {
+    fn gas_cost(&self) -> Gas {
+        token_burn_gas_cost()
     }
 }
 

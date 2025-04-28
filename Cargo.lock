@@ -5983,6 +5983,7 @@ dependencies = [
  "penumbra-sdk-shielded-pool",
  "penumbra-sdk-stake",
  "penumbra-sdk-tct",
+ "penumbra-sdk-tokenfactory",
  "penumbra-sdk-txhash",
  "poseidon377",
  "proptest",

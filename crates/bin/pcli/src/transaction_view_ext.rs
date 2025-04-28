@@ -377,6 +377,9 @@ impl TransactionViewExt for TransactionView {
                 penumbra_sdk_transaction::ActionView::PositionWithdraw(_) => {
                     ["Withdraw Liquitity Position", ""]
                 }
+                penumbra_sdk_transaction::ActionView::TokenBurn(_) => {
+                    ["Burn Tokens", ""]
+                }
                 penumbra_sdk_transaction::ActionView::ProposalDepositClaim(
                     proposal_deposit_claim,
                 ) => {

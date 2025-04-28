@@ -32,6 +32,8 @@ pub enum Action {
     PositionClose(penumbra_sdk_dex::lp::action::PositionClose),
     PositionWithdraw(penumbra_sdk_dex::lp::action::PositionWithdraw),
 
+    TokenBurn(penumbra_sdk_tokenfactory::TokenBurn),
+
     Delegate(penumbra_sdk_stake::Delegate),
     Undelegate(penumbra_sdk_stake::Undelegate),
     UndelegateClaim(penumbra_sdk_stake::UndelegateClaim),
@@ -70,6 +72,7 @@ impl EffectingData for Action {
             Action::PositionOpen(p) => p.effect_hash(),
             Action::PositionClose(p) => p.effect_hash(),
             Action::PositionWithdraw(p) => p.effect_hash(),
+            Action::TokenBurn(burn) => burn.effect_hash(),
             Action::Ics20Withdrawal(w) => w.effect_hash(),
             Action::CommunityPoolSpend(d) => d.effect_hash(),
             Action::CommunityPoolOutput(d) => d.effect_hash(),
@@ -115,6 +118,7 @@ impl Action {
             Action::PositionWithdraw(_) => {
                 tracing::info_span!("PositionWithdraw", ?idx)
             }
+            Action::TokenBurn(_) => tracing::info_span!("TokenBurn", ?idx),
             Action::Delegate(_) => tracing::info_span!("Delegate", ?idx),
             Action::Undelegate(_) => tracing::info_span!("Undelegate", ?idx),
             Action::UndelegateClaim(_) => tracing::info_span!("UndelegateClaim", ?idx),
@@ -163,6 +167,7 @@ impl Action {
             Action::ActionDutchAuctionEnd(_) => 54,
             Action::ActionDutchAuctionWithdraw(_) => 55,
             Action::ActionLiquidityTournamentVote(_) => 70,
+            Action::TokenBurn(_) => 80,
         }
     }
 }
@@ -185,6 +190,7 @@ impl IsAction for Action {
             Action::PositionOpen(p) => p.balance_commitment(),
             Action::PositionClose(p) => p.balance_commitment(),
             Action::PositionWithdraw(p) => p.balance_commitment(),
+            Action::TokenBurn(burn) => burn.balance_commitment(),
             Action::Ics20Withdrawal(withdrawal) => withdrawal.balance_commitment(),
             Action::CommunityPoolDeposit(deposit) => deposit.balance_commitment(),
             Action::CommunityPoolSpend(spend) => spend.balance_commitment(),
@@ -217,6 +223,7 @@ impl IsAction for Action {
             Action::PositionOpen(x) => x.view_from_perspective(txp),
             Action::PositionClose(x) => x.view_from_perspective(txp),
             Action::PositionWithdraw(x) => x.view_from_perspective(txp),
+            Action::TokenBurn(x) => x.view_from_perspective(txp),
             Action::Ics20Withdrawal(x) => x.view_from_perspective(txp),
             Action::CommunityPoolSpend(x) => x.view_from_perspective(txp),
             Action::CommunityPoolOutput(x) => x.view_from_perspective(txp),
@@ -288,6 +295,9 @@ impl From<Action> for pb::Action {
             },
             Action::PositionWithdraw(inner) => pb::Action {
                 action: Some(pb::action::Action::PositionWithdraw(inner.into())),
+            },
+            Action::TokenBurn(inner) => pb::Action {
+                action: Some(pb::action::Action::TokenBurn(inner.into())),
             },
             Action::Ics20Withdrawal(withdrawal) => pb::Action {
                 action: Some(pb::action::Action::Ics20Withdrawal(withdrawal.into())),
@@ -367,6 +377,9 @@ impl TryFrom<pb::Action> for Action {
             }
             pb::action::Action::PositionRewardClaim(_) => {
                 Err(anyhow!("PositionRewardClaim is deprecated and unsupported"))
+            }
+            pb::action::Action::TokenBurn(inner) => {
+                Ok(Action::TokenBurn(inner.try_into()?))
             }
             pb::action::Action::Ics20Withdrawal(inner) => {
                 Ok(Action::Ics20Withdrawal(inner.try_into()?))
