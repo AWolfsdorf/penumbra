@@ -4801,6 +4801,7 @@ dependencies = [
  "penumbra-sdk-stake",
  "penumbra-sdk-tct",
  "penumbra-sdk-test-subscriber",
+ "penumbra-sdk-tokenfactory",
  "penumbra-sdk-tower-trace",
  "penumbra-sdk-transaction",
  "penumbra-sdk-txhash",

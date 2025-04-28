@@ -30,6 +30,7 @@ component = [
   "penumbra-sdk-sct/component",
   "penumbra-sdk-shielded-pool/component",
   "penumbra-sdk-stake/component",
+  "penumbra-sdk-tokenfactory/component",
   "dep:tonic",
   "dep:tonic-reflection",
   "dep:tonic-web"
@@ -79,6 +80,7 @@ penumbra-sdk-proto                   = { workspace = true, default-features = tr
 penumbra-sdk-sct                     = { workspace = true, default-features = false }
 penumbra-sdk-shielded-pool           = { workspace = true, default-features = false }
 penumbra-sdk-stake                   = { workspace = true, default-features = false }
+penumbra-sdk-tokenfactory                   = { workspace = true, default-features = false }
 penumbra-sdk-tct                     = { workspace = true, default-features = true }
 penumbra-sdk-test-subscriber         = { workspace = true }
 penumbra-sdk-tower-trace             = { workspace = true }
