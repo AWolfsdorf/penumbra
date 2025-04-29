@@ -99,9 +99,6 @@ message Action {
     component.dex.v1.PositionWithdraw position_withdraw = 32;
     component.dex.v1.PositionRewardClaim position_reward_claim = 34 [deprecated = true];
 
-    // TokenBurn
-    component.tokenfactory.v1alpha.TokenBurn token_burn = 35;
-
     // (un)delegation
     component.stake.v1.Delegate delegate = 40;
     component.stake.v1.Undelegate undelegate = 41;
@@ -119,6 +116,9 @@ message Action {
 
     // Funding
     component.funding.v1.ActionLiquidityTournamentVote action_liquidity_tournament_vote = 70;
+    
+    // TokenBurn
+    component.tokenfactory.v1alpha.TokenBurn token_burn = 80;
 
     component.ibc.v1.Ics20Withdrawal ics20_withdrawal = 200;
   }
@@ -234,9 +234,6 @@ message ActionView {
     component.dex.v1.PositionWithdraw position_withdraw = 32;
     component.dex.v1.PositionRewardClaim position_reward_claim = 34 [deprecated = true];
 
-    // TokenBurn
-    component.tokenfactory.v1alpha.TokenBurn token_burn = 35;
-
     component.stake.v1.Delegate delegate = 41;
     component.stake.v1.Undelegate undelegate = 42;
     // Community Pool
@@ -254,6 +251,9 @@ message ActionView {
     component.stake.v1.UndelegateClaim undelegate_claim = 43;
 
     component.funding.v1.ActionLiquidityTournamentVoteView action_liquidity_tournament_vote = 70;
+    
+    // TokenBurn
+    component.tokenfactory.v1alpha.TokenBurn token_burn = 80;
     
     component.ibc.v1.Ics20Withdrawal ics20_withdrawal = 200;
   }
@@ -341,9 +341,6 @@ message ActionPlan {
     component.stake.v1.Undelegate undelegate = 41;
     component.stake.v1.UndelegateClaimPlan undelegate_claim = 42;
 
-    // TokenBurn
-    component.tokenfactory.v1alpha.TokenBurnPlan token_burn = 43;
-
     // Community Pool
     component.governance.v1.CommunityPoolSpend community_pool_spend = 50;
     component.governance.v1.CommunityPoolOutput community_pool_output = 51;
@@ -356,6 +353,9 @@ message ActionPlan {
 
     // Funding
     component.funding.v1.ActionLiquidityTournamentVotePlan action_liquidity_tournament_vote = 70;
+    
+    // TokenBurn
+    component.tokenfactory.v1alpha.TokenBurnPlan token_burn = 80;
   }
 }
 

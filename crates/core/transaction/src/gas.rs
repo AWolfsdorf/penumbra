@@ -250,24 +250,6 @@ fn position_withdraw_gas_cost() -> Gas {
     }
 }
 
-fn token_burn_gas_cost() -> Gas {
-    Gas {
-        // TokenId `token_id` = 32 bytes
-        // Amount `amount` = 16 bytes
-
-        // The block space measured as the byte length of the encoded action.
-        block_space: 48,
-        // The compact block space cost is based on the byte size of the data the [`Action`] adds
-        // to the compact block.
-        // For a TokenBurn the compact block is not modified.
-        compact_block_space: 0,
-        // There are some small validations performed so a token amount of gas is charged.
-        verification: 50,
-        // Execution cost is currently hardcoded at 10 for all `Action`` variants.
-        execution: 10,
-    }
-}
-
 fn dutch_auction_schedule_gas_cost(dutch_action_schedule: &ActionDutchAuctionSchedule) -> Gas {
     Gas {
         // penumbra.core.asset.v1.Value `input` = 48 bytes
@@ -600,7 +582,21 @@ impl GasCost for PositionWithdraw {
 
 impl GasCost for TokenBurn {
     fn gas_cost(&self) -> Gas {
-        token_burn_gas_cost()
+        Gas {
+            // TokenId `token_id` = 32 bytes
+            // Amount `amount` = 16 bytes
+
+            // The block space measured as the byte length of the encoded action.
+            block_space: self.encode_to_vec().len() as u64,
+            // The compact block space cost is based on the byte size of the data the [`Action`] adds
+            // to the compact block.
+            // For a TokenBurn the compact block is not modified.
+            compact_block_space: 0,
+            // There are some small validations performed so a token amount of gas is charged.
+            verification: 50,
+            // Execution cost is currently hardcoded at 10 for all `Action`` variants.
+            execution: 10,
+        }
     }
 }
 

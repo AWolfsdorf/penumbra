@@ -57,9 +57,6 @@ impl serde::Serialize for Action {
                 action::Action::PositionRewardClaim(v) => {
                     struct_ser.serialize_field("positionRewardClaim", v)?;
                 }
-                action::Action::TokenBurn(v) => {
-                    struct_ser.serialize_field("tokenBurn", v)?;
-                }
                 action::Action::Delegate(v) => {
                     struct_ser.serialize_field("delegate", v)?;
                 }
@@ -89,6 +86,9 @@ impl serde::Serialize for Action {
                 }
                 action::Action::ActionLiquidityTournamentVote(v) => {
                     struct_ser.serialize_field("actionLiquidityTournamentVote", v)?;
+                }
+                action::Action::TokenBurn(v) => {
+                    struct_ser.serialize_field("tokenBurn", v)?;
                 }
                 action::Action::Ics20Withdrawal(v) => {
                     struct_ser.serialize_field("ics20Withdrawal", v)?;
@@ -132,8 +132,6 @@ impl<'de> serde::Deserialize<'de> for Action {
             "positionWithdraw",
             "position_reward_claim",
             "positionRewardClaim",
-            "token_burn",
-            "tokenBurn",
             "delegate",
             "undelegate",
             "undelegate_claim",
@@ -152,6 +150,8 @@ impl<'de> serde::Deserialize<'de> for Action {
             "actionDutchAuctionWithdraw",
             "action_liquidity_tournament_vote",
             "actionLiquidityTournamentVote",
+            "token_burn",
+            "tokenBurn",
             "ics20_withdrawal",
             "ics20Withdrawal",
         ];
@@ -173,7 +173,6 @@ impl<'de> serde::Deserialize<'de> for Action {
             PositionClose,
             PositionWithdraw,
             PositionRewardClaim,
-            TokenBurn,
             Delegate,
             Undelegate,
             UndelegateClaim,
@@ -184,6 +183,7 @@ impl<'de> serde::Deserialize<'de> for Action {
             ActionDutchAuctionEnd,
             ActionDutchAuctionWithdraw,
             ActionLiquidityTournamentVote,
+            TokenBurn,
             Ics20Withdrawal,
             __SkipField__,
         }
@@ -222,7 +222,6 @@ impl<'de> serde::Deserialize<'de> for Action {
                             "positionClose" | "position_close" => Ok(GeneratedField::PositionClose),
                             "positionWithdraw" | "position_withdraw" => Ok(GeneratedField::PositionWithdraw),
                             "positionRewardClaim" | "position_reward_claim" => Ok(GeneratedField::PositionRewardClaim),
-                            "tokenBurn" | "token_burn" => Ok(GeneratedField::TokenBurn),
                             "delegate" => Ok(GeneratedField::Delegate),
                             "undelegate" => Ok(GeneratedField::Undelegate),
                             "undelegateClaim" | "undelegate_claim" => Ok(GeneratedField::UndelegateClaim),
@@ -233,6 +232,7 @@ impl<'de> serde::Deserialize<'de> for Action {
                             "actionDutchAuctionEnd" | "action_dutch_auction_end" => Ok(GeneratedField::ActionDutchAuctionEnd),
                             "actionDutchAuctionWithdraw" | "action_dutch_auction_withdraw" => Ok(GeneratedField::ActionDutchAuctionWithdraw),
                             "actionLiquidityTournamentVote" | "action_liquidity_tournament_vote" => Ok(GeneratedField::ActionLiquidityTournamentVote),
+                            "tokenBurn" | "token_burn" => Ok(GeneratedField::TokenBurn),
                             "ics20Withdrawal" | "ics20_withdrawal" => Ok(GeneratedField::Ics20Withdrawal),
                             _ => Ok(GeneratedField::__SkipField__),
                         }
@@ -361,13 +361,6 @@ impl<'de> serde::Deserialize<'de> for Action {
                             action__ = map_.next_value::<::std::option::Option<_>>()?.map(action::Action::PositionRewardClaim)
 ;
                         }
-                        GeneratedField::TokenBurn => {
-                            if action__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("tokenBurn"));
-                            }
-                            action__ = map_.next_value::<::std::option::Option<_>>()?.map(action::Action::TokenBurn)
-;
-                        }
                         GeneratedField::Delegate => {
                             if action__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("delegate"));
@@ -436,6 +429,13 @@ impl<'de> serde::Deserialize<'de> for Action {
                                 return Err(serde::de::Error::duplicate_field("actionLiquidityTournamentVote"));
                             }
                             action__ = map_.next_value::<::std::option::Option<_>>()?.map(action::Action::ActionLiquidityTournamentVote)
+;
+                        }
+                        GeneratedField::TokenBurn => {
+                            if action__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("tokenBurn"));
+                            }
+                            action__ = map_.next_value::<::std::option::Option<_>>()?.map(action::Action::TokenBurn)
 ;
                         }
                         GeneratedField::Ics20Withdrawal => {
@@ -529,9 +529,6 @@ impl serde::Serialize for ActionPlan {
                 action_plan::Action::UndelegateClaim(v) => {
                     struct_ser.serialize_field("undelegateClaim", v)?;
                 }
-                action_plan::Action::TokenBurn(v) => {
-                    struct_ser.serialize_field("tokenBurn", v)?;
-                }
                 action_plan::Action::CommunityPoolSpend(v) => {
                     struct_ser.serialize_field("communityPoolSpend", v)?;
                 }
@@ -552,6 +549,9 @@ impl serde::Serialize for ActionPlan {
                 }
                 action_plan::Action::ActionLiquidityTournamentVote(v) => {
                     struct_ser.serialize_field("actionLiquidityTournamentVote", v)?;
+                }
+                action_plan::Action::TokenBurn(v) => {
+                    struct_ser.serialize_field("tokenBurn", v)?;
                 }
             }
         }
@@ -598,8 +598,6 @@ impl<'de> serde::Deserialize<'de> for ActionPlan {
             "undelegate",
             "undelegate_claim",
             "undelegateClaim",
-            "token_burn",
-            "tokenBurn",
             "community_pool_spend",
             "communityPoolSpend",
             "community_pool_output",
@@ -614,6 +612,8 @@ impl<'de> serde::Deserialize<'de> for ActionPlan {
             "actionDutchAuctionWithdraw",
             "action_liquidity_tournament_vote",
             "actionLiquidityTournamentVote",
+            "token_burn",
+            "tokenBurn",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -637,7 +637,6 @@ impl<'de> serde::Deserialize<'de> for ActionPlan {
             Delegate,
             Undelegate,
             UndelegateClaim,
-            TokenBurn,
             CommunityPoolSpend,
             CommunityPoolOutput,
             CommunityPoolDeposit,
@@ -645,6 +644,7 @@ impl<'de> serde::Deserialize<'de> for ActionPlan {
             ActionDutchAuctionEnd,
             ActionDutchAuctionWithdraw,
             ActionLiquidityTournamentVote,
+            TokenBurn,
             __SkipField__,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
@@ -686,7 +686,6 @@ impl<'de> serde::Deserialize<'de> for ActionPlan {
                             "delegate" => Ok(GeneratedField::Delegate),
                             "undelegate" => Ok(GeneratedField::Undelegate),
                             "undelegateClaim" | "undelegate_claim" => Ok(GeneratedField::UndelegateClaim),
-                            "tokenBurn" | "token_burn" => Ok(GeneratedField::TokenBurn),
                             "communityPoolSpend" | "community_pool_spend" => Ok(GeneratedField::CommunityPoolSpend),
                             "communityPoolOutput" | "community_pool_output" => Ok(GeneratedField::CommunityPoolOutput),
                             "communityPoolDeposit" | "community_pool_deposit" => Ok(GeneratedField::CommunityPoolDeposit),
@@ -694,6 +693,7 @@ impl<'de> serde::Deserialize<'de> for ActionPlan {
                             "actionDutchAuctionEnd" | "action_dutch_auction_end" => Ok(GeneratedField::ActionDutchAuctionEnd),
                             "actionDutchAuctionWithdraw" | "action_dutch_auction_withdraw" => Ok(GeneratedField::ActionDutchAuctionWithdraw),
                             "actionLiquidityTournamentVote" | "action_liquidity_tournament_vote" => Ok(GeneratedField::ActionLiquidityTournamentVote),
+                            "tokenBurn" | "token_burn" => Ok(GeneratedField::TokenBurn),
                             _ => Ok(GeneratedField::__SkipField__),
                         }
                     }
@@ -849,13 +849,6 @@ impl<'de> serde::Deserialize<'de> for ActionPlan {
                             action__ = map_.next_value::<::std::option::Option<_>>()?.map(action_plan::Action::UndelegateClaim)
 ;
                         }
-                        GeneratedField::TokenBurn => {
-                            if action__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("tokenBurn"));
-                            }
-                            action__ = map_.next_value::<::std::option::Option<_>>()?.map(action_plan::Action::TokenBurn)
-;
-                        }
                         GeneratedField::CommunityPoolSpend => {
                             if action__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("communityPoolSpend"));
@@ -903,6 +896,13 @@ impl<'de> serde::Deserialize<'de> for ActionPlan {
                                 return Err(serde::de::Error::duplicate_field("actionLiquidityTournamentVote"));
                             }
                             action__ = map_.next_value::<::std::option::Option<_>>()?.map(action_plan::Action::ActionLiquidityTournamentVote)
+;
+                        }
+                        GeneratedField::TokenBurn => {
+                            if action__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("tokenBurn"));
+                            }
+                            action__ = map_.next_value::<::std::option::Option<_>>()?.map(action_plan::Action::TokenBurn)
 ;
                         }
                         GeneratedField::__SkipField__ => {
@@ -977,9 +977,6 @@ impl serde::Serialize for ActionView {
                 action_view::ActionView::PositionRewardClaim(v) => {
                     struct_ser.serialize_field("positionRewardClaim", v)?;
                 }
-                action_view::ActionView::TokenBurn(v) => {
-                    struct_ser.serialize_field("tokenBurn", v)?;
-                }
                 action_view::ActionView::Delegate(v) => {
                     struct_ser.serialize_field("delegate", v)?;
                 }
@@ -1009,6 +1006,9 @@ impl serde::Serialize for ActionView {
                 }
                 action_view::ActionView::ActionLiquidityTournamentVote(v) => {
                     struct_ser.serialize_field("actionLiquidityTournamentVote", v)?;
+                }
+                action_view::ActionView::TokenBurn(v) => {
+                    struct_ser.serialize_field("tokenBurn", v)?;
                 }
                 action_view::ActionView::Ics20Withdrawal(v) => {
                     struct_ser.serialize_field("ics20Withdrawal", v)?;
@@ -1052,8 +1052,6 @@ impl<'de> serde::Deserialize<'de> for ActionView {
             "positionWithdraw",
             "position_reward_claim",
             "positionRewardClaim",
-            "token_burn",
-            "tokenBurn",
             "delegate",
             "undelegate",
             "community_pool_spend",
@@ -1072,6 +1070,8 @@ impl<'de> serde::Deserialize<'de> for ActionView {
             "undelegateClaim",
             "action_liquidity_tournament_vote",
             "actionLiquidityTournamentVote",
+            "token_burn",
+            "tokenBurn",
             "ics20_withdrawal",
             "ics20Withdrawal",
         ];
@@ -1093,7 +1093,6 @@ impl<'de> serde::Deserialize<'de> for ActionView {
             PositionClose,
             PositionWithdraw,
             PositionRewardClaim,
-            TokenBurn,
             Delegate,
             Undelegate,
             CommunityPoolSpend,
@@ -1104,6 +1103,7 @@ impl<'de> serde::Deserialize<'de> for ActionView {
             ActionDutchAuctionWithdraw,
             UndelegateClaim,
             ActionLiquidityTournamentVote,
+            TokenBurn,
             Ics20Withdrawal,
             __SkipField__,
         }
@@ -1142,7 +1142,6 @@ impl<'de> serde::Deserialize<'de> for ActionView {
                             "positionClose" | "position_close" => Ok(GeneratedField::PositionClose),
                             "positionWithdraw" | "position_withdraw" => Ok(GeneratedField::PositionWithdraw),
                             "positionRewardClaim" | "position_reward_claim" => Ok(GeneratedField::PositionRewardClaim),
-                            "tokenBurn" | "token_burn" => Ok(GeneratedField::TokenBurn),
                             "delegate" => Ok(GeneratedField::Delegate),
                             "undelegate" => Ok(GeneratedField::Undelegate),
                             "communityPoolSpend" | "community_pool_spend" => Ok(GeneratedField::CommunityPoolSpend),
@@ -1153,6 +1152,7 @@ impl<'de> serde::Deserialize<'de> for ActionView {
                             "actionDutchAuctionWithdraw" | "action_dutch_auction_withdraw" => Ok(GeneratedField::ActionDutchAuctionWithdraw),
                             "undelegateClaim" | "undelegate_claim" => Ok(GeneratedField::UndelegateClaim),
                             "actionLiquidityTournamentVote" | "action_liquidity_tournament_vote" => Ok(GeneratedField::ActionLiquidityTournamentVote),
+                            "tokenBurn" | "token_burn" => Ok(GeneratedField::TokenBurn),
                             "ics20Withdrawal" | "ics20_withdrawal" => Ok(GeneratedField::Ics20Withdrawal),
                             _ => Ok(GeneratedField::__SkipField__),
                         }
@@ -1281,13 +1281,6 @@ impl<'de> serde::Deserialize<'de> for ActionView {
                             action_view__ = map_.next_value::<::std::option::Option<_>>()?.map(action_view::ActionView::PositionRewardClaim)
 ;
                         }
-                        GeneratedField::TokenBurn => {
-                            if action_view__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("tokenBurn"));
-                            }
-                            action_view__ = map_.next_value::<::std::option::Option<_>>()?.map(action_view::ActionView::TokenBurn)
-;
-                        }
                         GeneratedField::Delegate => {
                             if action_view__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("delegate"));
@@ -1356,6 +1349,13 @@ impl<'de> serde::Deserialize<'de> for ActionView {
                                 return Err(serde::de::Error::duplicate_field("actionLiquidityTournamentVote"));
                             }
                             action_view__ = map_.next_value::<::std::option::Option<_>>()?.map(action_view::ActionView::ActionLiquidityTournamentVote)
+;
+                        }
+                        GeneratedField::TokenBurn => {
+                            if action_view__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("tokenBurn"));
+                            }
+                            action_view__ = map_.next_value::<::std::option::Option<_>>()?.map(action_view::ActionView::TokenBurn)
 ;
                         }
                         GeneratedField::Ics20Withdrawal => {
