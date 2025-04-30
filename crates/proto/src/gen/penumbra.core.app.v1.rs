@@ -222,6 +222,11 @@ pub struct GenesisContent {
     pub auction_content: ::core::option::Option<
         super::super::component::auction::v1::GenesisContent,
     >,
+    /// Token factory component genesis state.
+    #[prost(message, optional, tag = "13")]
+    pub token_factory_content: ::core::option::Option<
+        super::super::component::tokenfactory::v1alpha::GenesisContent,
+    >,
 }
 impl ::prost::Name for GenesisContent {
     const NAME: &'static str = "GenesisContent";

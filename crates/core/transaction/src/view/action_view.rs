@@ -16,7 +16,7 @@ use penumbra_sdk_ibc::IbcRelay;
 use penumbra_sdk_proto::{core::transaction::v1 as pbt, DomainType};
 use penumbra_sdk_shielded_pool::Ics20Withdrawal;
 use penumbra_sdk_stake::{Delegate, Undelegate, UndelegateClaim};
-use penumbra_sdk_tokenfactory::TokenBurn;
+use penumbra_sdk_token_factory::TokenBurn;
 use serde::{Deserialize, Serialize};
 
 pub use penumbra_sdk_governance::DelegatorVoteView;

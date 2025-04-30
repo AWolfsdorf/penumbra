@@ -4713,6 +4713,7 @@ dependencies = [
  "penumbra-sdk-shielded-pool",
  "penumbra-sdk-stake",
  "penumbra-sdk-tct",
+ "penumbra-sdk-token-factory",
  "penumbra-sdk-tower-trace",
  "penumbra-sdk-transaction",
  "penumbra-sdk-txhash",
@@ -4801,7 +4802,7 @@ dependencies = [
  "penumbra-sdk-stake",
  "penumbra-sdk-tct",
  "penumbra-sdk-test-subscriber",
- "penumbra-sdk-tokenfactory",
+ "penumbra-sdk-token-factory",
  "penumbra-sdk-tower-trace",
  "penumbra-sdk-transaction",
  "penumbra-sdk-txhash",
@@ -5870,7 +5871,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "penumbra-sdk-tokenfactory"
+name = "penumbra-sdk-token-factory"
 version = "2.0.0-alpha.8"
 dependencies = [
  "anyhow",
@@ -5984,7 +5985,7 @@ dependencies = [
  "penumbra-sdk-shielded-pool",
  "penumbra-sdk-stake",
  "penumbra-sdk-tct",
- "penumbra-sdk-tokenfactory",
+ "penumbra-sdk-token-factory",
  "penumbra-sdk-txhash",
  "poseidon377",
  "proptest",

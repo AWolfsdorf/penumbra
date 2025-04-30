@@ -10,6 +10,7 @@ use penumbra_sdk_proto::{penumbra::core::app::v1 as pb, DomainType};
 use penumbra_sdk_sct::genesis::Content as SctContent;
 use penumbra_sdk_shielded_pool::genesis::Content as ShieldedPoolContent;
 use penumbra_sdk_stake::genesis::Content as StakeContent;
+use penumbra_sdk_token_factory::genesis::Content as TokenFactoryContent;
 use serde::{Deserialize, Serialize};
 
 /// The application state at genesis.
@@ -59,6 +60,8 @@ pub struct Content {
     pub dex_content: DexContent,
     /// Auction component genesis state.
     pub auction_content: AuctionContent,
+    /// Token factory component genesis state.
+    pub token_factory_content: TokenFactoryContent,
 }
 
 impl DomainType for Content {
@@ -101,6 +104,7 @@ impl From<Content> for pb::GenesisContent {
             shielded_pool_content: Some(genesis.shielded_pool_content.into()),
             stake_content: Some(genesis.stake_content.into()),
             dex_content: Some(genesis.dex_content.into()),
+            token_factory_content: Some(genesis.token_factory_content.into()),
         }
     }
 }
@@ -172,6 +176,10 @@ impl TryFrom<pb::GenesisContent> for Content {
             dex_content: msg
                 .dex_content
                 .ok_or_else(|| anyhow::anyhow!("proto response missing dex content"))?
+                .try_into()?,
+            token_factory_content: msg
+                .token_factory_content
+                .ok_or_else(|| anyhow::anyhow!("proto response missing token factory content"))?
                 .try_into()?,
         })
     }

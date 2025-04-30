@@ -1,8 +1,8 @@
+use anyhow::Result;
 use async_trait::async_trait;
 use cnidarium::StateWrite;
 use penumbra_sdk_num::Amount;
 use tracing::instrument;
-use anyhow::Result;
 
 use crate::TokenId;
 

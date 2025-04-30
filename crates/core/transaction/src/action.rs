@@ -32,7 +32,7 @@ pub enum Action {
     PositionClose(penumbra_sdk_dex::lp::action::PositionClose),
     PositionWithdraw(penumbra_sdk_dex::lp::action::PositionWithdraw),
 
-    TokenBurn(penumbra_sdk_tokenfactory::TokenBurn),
+    TokenBurn(penumbra_sdk_token_factory::TokenBurn),
 
     Delegate(penumbra_sdk_stake::Delegate),
     Undelegate(penumbra_sdk_stake::Undelegate),

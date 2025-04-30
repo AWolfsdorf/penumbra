@@ -5,9 +5,7 @@ use cnidarium::{ArcStateDeltaExt, StateDelta, TempStorage};
 use cnidarium_component::{ActionHandler, Component};
 use penumbra_sdk_asset::asset;
 use penumbra_sdk_num::Amount;
-use penumbra_sdk_tokenfactory::{
-    burn::TokenBurnPlan, component::TokenFactory, TokenId
-};
+use penumbra_sdk_token_factory::{burn::TokenBurnPlan, component::TokenFactory, TokenId};
 use rand_core::SeedableRng;
 use std::sync::Arc;
 
@@ -79,4 +77,4 @@ async fn token_burn_with_zero_amount() -> anyhow::Result<()> {
     state_tx.apply();
 
     Ok(())
-} 
+}

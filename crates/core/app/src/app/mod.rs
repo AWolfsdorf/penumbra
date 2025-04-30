@@ -31,6 +31,7 @@ use penumbra_sdk_shielded_pool::component::{ShieldedPool, StateReadExt as _, Sta
 use penumbra_sdk_stake::component::{
     stake::ConsensusUpdateRead, Staking, StateReadExt as _, StateWriteExt as _,
 };
+use penumbra_sdk_token_factory::component::TokenFactory;
 use penumbra_sdk_transaction::Transaction;
 use prost::Message as _;
 use tendermint::abci::{self, Event};
@@ -141,6 +142,7 @@ impl App {
                 Governance::init_chain(&mut state_tx, Some(&genesis.governance_content)).await;
                 FeeComponent::init_chain(&mut state_tx, Some(&genesis.fee_content)).await;
                 Funding::init_chain(&mut state_tx, Some(&genesis.funding_content)).await;
+                TokenFactory::init_chain(&mut state_tx, Some(&genesis.token_factory_content)).await;
 
                 state_tx
                     .finish_block()
@@ -157,6 +159,7 @@ impl App {
                 CommunityPool::init_chain(&mut state_tx, None).await;
                 FeeComponent::init_chain(&mut state_tx, None).await;
                 Funding::init_chain(&mut state_tx, None).await;
+                TokenFactory::init_chain(&mut state_tx, None).await;
             }
         };
 
@@ -348,6 +351,7 @@ impl App {
         Staking::begin_block(&mut arc_state_tx, begin_block).await;
         FeeComponent::begin_block(&mut arc_state_tx, begin_block).await;
         Funding::begin_block(&mut arc_state_tx, begin_block).await;
+        TokenFactory::begin_block(&mut arc_state_tx, begin_block).await;
 
         let state_tx = Arc::try_unwrap(arc_state_tx)
             .expect("components did not retain copies of shared state");
@@ -479,6 +483,8 @@ impl App {
         Staking::end_block(&mut arc_state_tx, end_block).await;
         FeeComponent::end_block(&mut arc_state_tx, end_block).await;
         Funding::end_block(&mut arc_state_tx, end_block).await;
+        TokenFactory::end_block(&mut arc_state_tx, end_block).await;
+
         let mut state_tx = Arc::try_unwrap(arc_state_tx)
             .expect("components did not retain copies of shared state");
         tracing::debug!("finished app components' `end_block` hooks");
@@ -545,6 +551,9 @@ impl App {
             Funding::end_epoch(&mut arc_state_tx)
                 .await
                 .expect("able to call end_epoch on Funding component");
+            TokenFactory::end_epoch(&mut arc_state_tx)
+                .await
+                .expect("able to call end_epoch on TokenFactory component");
 
             let mut state_tx = Arc::try_unwrap(arc_state_tx)
                 .expect("components did not retain copies of shared state");

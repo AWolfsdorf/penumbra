@@ -1,5 +1,5 @@
 [package]
-name = "penumbra-sdk-tokenfactory"
+name = "penumbra-sdk-token-factory"
 authors = {workspace = true}
 repository = {workspace = true}
 description = "A token factory implementation for Penumbra"

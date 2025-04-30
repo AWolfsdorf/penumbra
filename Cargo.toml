@@ -177,7 +177,7 @@ penumbra-sdk-proto                   = { default-features = false, version = "2.
 penumbra-sdk-sct                     = { default-features = false, version = "2.0.0-alpha.8", path = "crates/core/component/sct" }
 penumbra-sdk-shielded-pool           = { default-features = false, version = "2.0.0-alpha.8", path = "crates/core/component/shielded-pool" }
 penumbra-sdk-stake                   = { default-features = false, version = "2.0.0-alpha.8", path = "crates/core/component/stake" }
-penumbra-sdk-tokenfactory            = { default-features = false, version = "2.0.0-alpha.8", path = "crates/core/component/tokenfactory" }
+penumbra-sdk-token-factory           = { default-features = false, version = "2.0.0-alpha.8", path = "crates/core/component/tokenfactory" }
 penumbra-sdk-tct                     = { default-features = false, version = "2.0.0-alpha.8", path = "crates/crypto/tct" }
 penumbra-sdk-test-subscriber         = { version = "2.0.0-alpha.8", path = "crates/test/tracing-subscriber" }
 penumbra-sdk-tower-trace             = { version = "2.0.0-alpha.8", path = "crates/util/tower-trace" }

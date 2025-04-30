@@ -24,7 +24,7 @@ use penumbra_sdk_governance::{
 use penumbra_sdk_ibc::IbcRelay;
 use penumbra_sdk_shielded_pool::{Ics20Withdrawal, Note, Output, OutputView, Spend, SpendView};
 use penumbra_sdk_stake::{Delegate, Undelegate, UndelegateClaim};
-use penumbra_sdk_tokenfactory::TokenBurn;
+use penumbra_sdk_token_factory::TokenBurn;
 
 use crate::{Action, ActionView, TransactionPerspective};
 

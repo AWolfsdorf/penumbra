@@ -16,7 +16,7 @@ use penumbra_sdk_stake::{
 use penumbra_sdk_governance::{
     DelegatorVote, ProposalDepositClaim, ProposalSubmit, ProposalWithdraw, ValidatorVote,
 };
-use penumbra_sdk_tokenfactory::TokenBurn;
+use penumbra_sdk_token_factory::TokenBurn;
 
 use crate::{
     plan::{ActionPlan, TransactionPlan},

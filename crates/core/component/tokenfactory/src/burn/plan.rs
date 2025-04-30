@@ -1,6 +1,4 @@
-use ark_ff::Zero;
-use decaf377::Fr;
-use penumbra_sdk_asset::{asset::Id, balance, Balance, Value};
+use penumbra_sdk_asset::{asset::Id, Balance, Value};
 use penumbra_sdk_num::Amount;
 use penumbra_sdk_proto::{penumbra::core::component::tokenfactory::v1alpha as pb, DomainType};
 use serde::{Deserialize, Serialize};
@@ -8,10 +6,7 @@ use serde::{Deserialize, Serialize};
 use super::TokenBurn;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(
-    try_from = "pb::TokenBurnPlan",
-    into = "pb::TokenBurnPlan"
-)]
+#[serde(try_from = "pb::TokenBurnPlan", into = "pb::TokenBurnPlan")]
 pub struct TokenBurnPlan {
     pub asset_id: Id,
     pub amount: Amount,
@@ -61,4 +56,4 @@ impl TryFrom<pb::TokenBurnPlan> for TokenBurnPlan {
                 .try_into()?,
         })
     }
-} 
+}

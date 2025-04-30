@@ -9,15 +9,18 @@ The token factory is organized into the following components:
 ### Core Modules
 
 1. **TokenFactoryNft** (`nft.rs`): Represents minting rights for a token created through the token factory.
+
    - Uses the format `factory_mint_[N]_[ID]` for NFT denominations
    - Includes sequence numbers for tracking minting rights transfers
 
 2. **TokenFactory** (`factory.rs`): Main trait for token factory operations.
+
    - Create new tokens with metadata and initial supply
    - Mint additional tokens using NFT-based authority
    - Burn minting rights when no longer needed
 
 3. **NoteManager** (`note_manager.rs`): Manages the integration with the shielded pool.
+
    - Add notes to the shielded pool
    - Remove notes from the shielded pool
    - Split notes for partial transfers
@@ -30,6 +33,7 @@ The token factory is organized into the following components:
 ### Additional Components
 
 1. **State Keys** (`state_key.rs`): Defines key formats for storing data in the state.
+
    - Denomination creator mappings
    - Denomination admin mappings
 
@@ -44,7 +48,7 @@ The token factory is organized into the following components:
 ### Creating a New Token
 
 ```rust
-use penumbra_sdk_tokenfactory::{
+use penumbra_sdk_token_factory::{
     TokenFactory,
     TokenMetadata,
     TokenFactoryNft,
@@ -59,7 +63,7 @@ async fn create_new_token(factory: &mut impl TokenFactory) -> anyhow::Result<(St
         uri: None,
         uri_hash: None,
     };
-    
+
     let initial_supply = Amount::from(1000u128);
     factory.create_token(metadata, initial_supply).await
 }
@@ -95,18 +99,19 @@ async fn token_factory_workflow(factory: &mut impl TokenFactory) -> anyhow::Resu
     // 1. Create a new token
     let (denom, nft) = create_new_token(factory).await?;
     println!("Created token with denom: {}", denom);
-    
+
     // 2. Mint more tokens
     let new_nft = mint_more_tokens(factory, &nft, Amount::from(500u128)).await?;
     println!("Minted more tokens, new NFT sequence: {}", new_nft.sequence());
-    
+
     // 3. Burn minting rights
     burn_minting_rights(factory, &new_nft).await?;
     println!("Burned minting rights");
-    
+
     Ok(())
 }
 ```
+
 ## Integration with Shielded Pool
 
 The token factory integrates with Penumbra's shielded pool to ensure privacy for all token operations:
@@ -131,4 +136,4 @@ The token factory integrates with Penumbra's shielded pool to ensure privacy for
 
 1. **Bonding Curve Support**: Automatic creation of token pools with bonding curves.
 2. **Admin Controls**: Additional functionality for token administrators.
-3. **Metadata Updates**: Ability to update token metadata after creation. 
+3. **Metadata Updates**: Ability to update token metadata after creation.
