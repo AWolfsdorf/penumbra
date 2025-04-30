@@ -2,25 +2,26 @@ mod common;
 
 use self::common::TempStorageExt;
 use cnidarium::{ArcStateDeltaExt, StateDelta, TempStorage};
-use cnidarium_component::ActionHandler;
+use cnidarium_component::{ActionHandler, Component};
 use penumbra_sdk_asset::asset;
 use penumbra_sdk_num::Amount;
 use penumbra_sdk_tokenfactory::{
-    burn::TokenBurnPlan,
-    TokenId,
+    burn::TokenBurnPlan, component::TokenFactory, TokenId
 };
 use rand_core::SeedableRng;
 use std::sync::Arc;
 
 #[tokio::test]
 async fn token_burn() -> anyhow::Result<()> {
-    let mut rng = rand_chacha::ChaChaRng::seed_from_u64(1312);
-
     let storage = TempStorage::new_with_penumbra_prefixes()
         .await?
         .apply_default_genesis()
         .await?;
-    let mut state = Arc::new(StateDelta::new(storage.latest_snapshot()));
+    let mut state = StateDelta::new(storage.latest_snapshot());
+
+    TokenFactory::init_chain(&mut state, None).await;
+
+    let mut state = Arc::new(state);
 
     // Get a test token to burn
     let gm = asset::Cache::with_known_assets().get_unit("gm").unwrap();
@@ -29,7 +30,7 @@ async fn token_burn() -> anyhow::Result<()> {
 
     // Create a token burn plan
     let burn_plan = TokenBurnPlan {
-        asset_id: gm.id(),
+        asset_id: token_id.into(),
         amount,
     };
 
@@ -40,7 +41,6 @@ async fn token_burn() -> anyhow::Result<()> {
     burn.check_stateless(()).await?;
     burn.check_historical(state.clone()).await?;
     let mut state_tx = state.try_begin_transaction().unwrap();
-    // state_tx.put_mock_source(1u8);
     burn.check_and_execute(&mut state_tx).await?;
     state_tx.apply();
 
@@ -75,7 +75,6 @@ async fn token_burn_with_zero_amount() -> anyhow::Result<()> {
     burn.check_stateless(()).await?;
     burn.check_historical(state.clone()).await?;
     let mut state_tx = state.try_begin_transaction().unwrap();
-    // state_tx.put_mock_source(1u8);
     burn.check_and_execute(&mut state_tx).await?;
     state_tx.apply();
 

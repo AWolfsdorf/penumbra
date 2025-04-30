@@ -32,10 +32,6 @@ impl TokenBurnPlan {
             amount: self.amount,
         })
     }
-
-    pub fn commitment(&self) -> balance::Commitment {
-        self.balance().commit(Fr::zero())
-    }
 }
 
 impl DomainType for TokenBurnPlan {
