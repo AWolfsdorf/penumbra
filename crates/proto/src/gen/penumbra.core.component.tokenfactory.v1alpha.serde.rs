@@ -111,6 +111,119 @@ impl<'de> serde::Deserialize<'de> for EventTokenBurn {
         deserializer.deserialize_struct("penumbra.core.component.tokenfactory.v1alpha.EventTokenBurn", FIELDS, GeneratedVisitor)
     }
 }
+impl serde::Serialize for EventTokenCreate {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.token_id.is_some() {
+            len += 1;
+        }
+        if self.amount.is_some() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("penumbra.core.component.tokenfactory.v1alpha.EventTokenCreate", len)?;
+        if let Some(v) = self.token_id.as_ref() {
+            struct_ser.serialize_field("tokenId", v)?;
+        }
+        if let Some(v) = self.amount.as_ref() {
+            struct_ser.serialize_field("amount", v)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for EventTokenCreate {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "token_id",
+            "tokenId",
+            "amount",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            TokenId,
+            Amount,
+            __SkipField__,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "tokenId" | "token_id" => Ok(GeneratedField::TokenId),
+                            "amount" => Ok(GeneratedField::Amount),
+                            _ => Ok(GeneratedField::__SkipField__),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = EventTokenCreate;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct penumbra.core.component.tokenfactory.v1alpha.EventTokenCreate")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<EventTokenCreate, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut token_id__ = None;
+                let mut amount__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::TokenId => {
+                            if token_id__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("tokenId"));
+                            }
+                            token_id__ = map_.next_value()?;
+                        }
+                        GeneratedField::Amount => {
+                            if amount__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("amount"));
+                            }
+                            amount__ = map_.next_value()?;
+                        }
+                        GeneratedField::__SkipField__ => {
+                            let _ = map_.next_value::<serde::de::IgnoredAny>()?;
+                        }
+                    }
+                }
+                Ok(EventTokenCreate {
+                    token_id: token_id__,
+                    amount: amount__,
+                })
+            }
+        }
+        deserializer.deserialize_struct("penumbra.core.component.tokenfactory.v1alpha.EventTokenCreate", FIELDS, GeneratedVisitor)
+    }
+}
 impl serde::Serialize for GenesisContent {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -431,6 +544,274 @@ impl<'de> serde::Deserialize<'de> for TokenBurnPlan {
             }
         }
         deserializer.deserialize_struct("penumbra.core.component.tokenfactory.v1alpha.TokenBurnPlan", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for TokenCreate {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.metadata.is_some() {
+            len += 1;
+        }
+        if !self.nonce.is_empty() {
+            len += 1;
+        }
+        if self.initial_supply.is_some() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("penumbra.core.component.tokenfactory.v1alpha.TokenCreate", len)?;
+        if let Some(v) = self.metadata.as_ref() {
+            struct_ser.serialize_field("metadata", v)?;
+        }
+        if !self.nonce.is_empty() {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("nonce", pbjson::private::base64::encode(&self.nonce).as_str())?;
+        }
+        if let Some(v) = self.initial_supply.as_ref() {
+            struct_ser.serialize_field("initialSupply", v)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for TokenCreate {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "metadata",
+            "nonce",
+            "initial_supply",
+            "initialSupply",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Metadata,
+            Nonce,
+            InitialSupply,
+            __SkipField__,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "metadata" => Ok(GeneratedField::Metadata),
+                            "nonce" => Ok(GeneratedField::Nonce),
+                            "initialSupply" | "initial_supply" => Ok(GeneratedField::InitialSupply),
+                            _ => Ok(GeneratedField::__SkipField__),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = TokenCreate;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct penumbra.core.component.tokenfactory.v1alpha.TokenCreate")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<TokenCreate, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut metadata__ = None;
+                let mut nonce__ = None;
+                let mut initial_supply__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Metadata => {
+                            if metadata__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("metadata"));
+                            }
+                            metadata__ = map_.next_value()?;
+                        }
+                        GeneratedField::Nonce => {
+                            if nonce__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("nonce"));
+                            }
+                            nonce__ = 
+                                Some(map_.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::InitialSupply => {
+                            if initial_supply__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("initialSupply"));
+                            }
+                            initial_supply__ = map_.next_value()?;
+                        }
+                        GeneratedField::__SkipField__ => {
+                            let _ = map_.next_value::<serde::de::IgnoredAny>()?;
+                        }
+                    }
+                }
+                Ok(TokenCreate {
+                    metadata: metadata__,
+                    nonce: nonce__.unwrap_or_default(),
+                    initial_supply: initial_supply__,
+                })
+            }
+        }
+        deserializer.deserialize_struct("penumbra.core.component.tokenfactory.v1alpha.TokenCreate", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for TokenCreatePlan {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.metadata.is_some() {
+            len += 1;
+        }
+        if !self.nonce.is_empty() {
+            len += 1;
+        }
+        if self.initial_supply.is_some() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("penumbra.core.component.tokenfactory.v1alpha.TokenCreatePlan", len)?;
+        if let Some(v) = self.metadata.as_ref() {
+            struct_ser.serialize_field("metadata", v)?;
+        }
+        if !self.nonce.is_empty() {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("nonce", pbjson::private::base64::encode(&self.nonce).as_str())?;
+        }
+        if let Some(v) = self.initial_supply.as_ref() {
+            struct_ser.serialize_field("initialSupply", v)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for TokenCreatePlan {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "metadata",
+            "nonce",
+            "initial_supply",
+            "initialSupply",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Metadata,
+            Nonce,
+            InitialSupply,
+            __SkipField__,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "metadata" => Ok(GeneratedField::Metadata),
+                            "nonce" => Ok(GeneratedField::Nonce),
+                            "initialSupply" | "initial_supply" => Ok(GeneratedField::InitialSupply),
+                            _ => Ok(GeneratedField::__SkipField__),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = TokenCreatePlan;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct penumbra.core.component.tokenfactory.v1alpha.TokenCreatePlan")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<TokenCreatePlan, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut metadata__ = None;
+                let mut nonce__ = None;
+                let mut initial_supply__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Metadata => {
+                            if metadata__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("metadata"));
+                            }
+                            metadata__ = map_.next_value()?;
+                        }
+                        GeneratedField::Nonce => {
+                            if nonce__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("nonce"));
+                            }
+                            nonce__ = 
+                                Some(map_.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::InitialSupply => {
+                            if initial_supply__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("initialSupply"));
+                            }
+                            initial_supply__ = map_.next_value()?;
+                        }
+                        GeneratedField::__SkipField__ => {
+                            let _ = map_.next_value::<serde::de::IgnoredAny>()?;
+                        }
+                    }
+                }
+                Ok(TokenCreatePlan {
+                    metadata: metadata__,
+                    nonce: nonce__.unwrap_or_default(),
+                    initial_supply: initial_supply__,
+                })
+            }
+        }
+        deserializer.deserialize_struct("penumbra.core.component.tokenfactory.v1alpha.TokenCreatePlan", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for TokenFactoryNft {

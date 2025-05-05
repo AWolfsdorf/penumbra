@@ -152,3 +152,68 @@ impl ::prost::Name for TokenBurnPlan {
         "/penumbra.core.component.tokenfactory.v1alpha.TokenBurnPlan".into()
     }
 }
+/// TokenCreate defines the action for creating a new token.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TokenCreate {
+    /// The metadata for the token
+    #[prost(message, optional, tag = "1")]
+    pub metadata: ::core::option::Option<super::super::super::asset::v1::Metadata>,
+    /// The nonce used to generate the token ID
+    #[prost(bytes = "vec", tag = "2")]
+    pub nonce: ::prost::alloc::vec::Vec<u8>,
+    /// The initial supply of the token
+    #[prost(message, optional, tag = "3")]
+    pub initial_supply: ::core::option::Option<super::super::super::num::v1::Amount>,
+}
+impl ::prost::Name for TokenCreate {
+    const NAME: &'static str = "TokenCreate";
+    const PACKAGE: &'static str = "penumbra.core.component.tokenfactory.v1alpha";
+    fn full_name() -> ::prost::alloc::string::String {
+        "penumbra.core.component.tokenfactory.v1alpha.TokenCreate".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/penumbra.core.component.tokenfactory.v1alpha.TokenCreate".into()
+    }
+}
+/// EventTokenCreate defines the event for creating a token.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct EventTokenCreate {
+    #[prost(message, optional, tag = "1")]
+    pub token_id: ::core::option::Option<TokenId>,
+    /// The amount of tokens created
+    #[prost(message, optional, tag = "2")]
+    pub amount: ::core::option::Option<super::super::super::num::v1::Amount>,
+}
+impl ::prost::Name for EventTokenCreate {
+    const NAME: &'static str = "EventTokenCreate";
+    const PACKAGE: &'static str = "penumbra.core.component.tokenfactory.v1alpha";
+    fn full_name() -> ::prost::alloc::string::String {
+        "penumbra.core.component.tokenfactory.v1alpha.EventTokenCreate".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/penumbra.core.component.tokenfactory.v1alpha.EventTokenCreate".into()
+    }
+}
+/// TokenCreatePlan defines the plan for creating a token.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TokenCreatePlan {
+    /// The metadata for the token
+    #[prost(message, optional, tag = "1")]
+    pub metadata: ::core::option::Option<super::super::super::asset::v1::Metadata>,
+    /// The nonce used to generate the token ID
+    #[prost(bytes = "vec", tag = "2")]
+    pub nonce: ::prost::alloc::vec::Vec<u8>,
+    /// The initial supply of the token
+    #[prost(message, optional, tag = "3")]
+    pub initial_supply: ::core::option::Option<super::super::super::num::v1::Amount>,
+}
+impl ::prost::Name for TokenCreatePlan {
+    const NAME: &'static str = "TokenCreatePlan";
+    const PACKAGE: &'static str = "penumbra.core.component.tokenfactory.v1alpha";
+    fn full_name() -> ::prost::alloc::string::String {
+        "penumbra.core.component.tokenfactory.v1alpha.TokenCreatePlan".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/penumbra.core.component.tokenfactory.v1alpha.TokenCreatePlan".into()
+    }
+}

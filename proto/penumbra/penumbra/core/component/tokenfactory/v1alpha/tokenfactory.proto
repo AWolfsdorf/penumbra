@@ -65,3 +65,30 @@ message TokenBurnPlan {
   // The amount to burn.
   num.v1.Amount amount = 2;
 }
+
+// TokenCreate defines the action for creating a new token.
+message TokenCreate {
+  // The metadata for the token
+  penumbra.core.asset.v1.Metadata metadata = 1;
+  // The nonce used to generate the token ID
+  bytes nonce = 2;
+  // The initial supply of the token
+  num.v1.Amount initial_supply = 3;
+}
+
+// EventTokenCreate defines the event for creating a token.
+message EventTokenCreate {
+  TokenId token_id = 1;
+  // The amount of tokens created
+  num.v1.Amount amount = 2;
+}
+
+// TokenCreatePlan defines the plan for creating a token.
+message TokenCreatePlan {
+  // The metadata for the token
+  penumbra.core.asset.v1.Metadata metadata = 1;
+  // The nonce used to generate the token ID
+  bytes nonce = 2;
+  // The initial supply of the token
+  num.v1.Amount initial_supply = 3;
+}
