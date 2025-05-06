@@ -24,11 +24,7 @@ impl ActionHandler for TokenCreate {
         );
 
         // Create the token and mint the initial supply
-        state.create_token(
-            self.metadata.clone(),
-            self.nonce,
-            self.initial_supply,
-        ).await?;
+        state.create_token(self.clone()).await?;
 
         // Record the event
         state.record_proto(EventTokenCreate {

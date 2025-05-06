@@ -1,12 +1,13 @@
-use anyhow::{bail, Result};
+use anyhow::{bail, ensure, Result};
 use async_trait::async_trait;
 use cnidarium::{StateWrite, StateRead};
-use penumbra_sdk_asset::asset::{self as asset, Metadata};
+use penumbra_sdk_asset::asset::{self as asset};
 use penumbra_sdk_num::Amount;
-use penumbra_sdk_proto::StateWriteProto;
+use penumbra_sdk_proto::{StateWriteProto, StateReadProto};
+use pbjson_types::Any;
 use tracing::instrument;
 
-use crate::{state_key, TokenId, TokenFactoryNft, TokenFactoryPosition};
+use crate::{state_key, TokenCreate, TokenFactoryNft, TokenId};
 
 /// Manages the creation of new token factories and.
 #[async_trait]
@@ -20,14 +21,16 @@ pub trait TokenManager: StateWrite {
     #[instrument(name = "token_manager", skip_all)]
     async fn create_token(
         &mut self,
-        _metadata: Metadata, // TODO: How do we use metadata?
-        nonce: [u8; 32],
-        initial_supply: Amount,
+        token_create: TokenCreate,
     ) -> Result<()> {
         // Create the token ID from the nonce
-        let position = TokenFactoryPosition { nonce };
-        // TODO: Check that the token ID is valid https://github.com/AWolfsdorf/penumbra/blob/space/awolfsdorf/token_factory/crates/core/component/auction/src/component/dutch_auction.rs#L513
-        let token_id = position.id();
+        let token_id = token_create.token_id();
+
+        // Check that the `token_id` is unused.
+        ensure!(
+            !self.token_id_exists(token_id).await,
+            "the supplied token id is already known to the chain (id={token_id})"
+        );
 
         // Create the minting rights NFT
         let mint_nft = TokenFactoryNft::new(token_id, 0);
@@ -35,18 +38,23 @@ pub trait TokenManager: StateWrite {
         let token_id: asset::Id = token_id.try_into()?;
 
         // Add the initial supply to the shielded pool
-        let _ = self.set_factory_supply(&token_id, initial_supply).await;
+        let _ = self.set_factory_supply(&token_id, token_create.initial_supply).await;
 
         // Add the minting rights NFT to the shielded pool
-        self.put(state_key::nft_minting_rights(0, &token_id), mint_nft);
+        self.put(state_key::token_factory_nft::nft_minting_rights(0, &token_id), mint_nft);
 
         Ok(())
     }
+}
 
+impl<T: StateWrite + ?Sized> TokenManager for T {}
+
+#[async_trait]
+pub trait TokenFactoryData: StateRead {
     /// Returns the number of minting rights for a given asset.
     /// If there were no counter initialized for a given asset, this default to zero.
     async fn get_factory_mint_count(&self, asset_id: &asset::Id) -> u32 {
-        let path = state_key::nft_minting_rights(0, asset_id);
+        let path = state_key::token_factory_nft::nft_minting_rights(0, asset_id);
         self.get_factory_mint_count_from_key(path.as_bytes()).await
     }
 
@@ -67,7 +75,7 @@ pub trait TokenManager: StateWrite {
     }
 
     async fn get_factory_supply(&self, asset_id: &asset::Id) -> u128 {
-        let path = crate::state_key::token_supply(asset_id);
+        let path = state_key::token_factory::by_id(asset_id);
         self.get_factory_supply_from_key(path.as_bytes()).await
     }
 
@@ -77,13 +85,27 @@ pub trait TokenManager: StateWrite {
         };
         u128::from_be_bytes(raw_supply.try_into().expect("supply is at most 16 bytes"))
     }
+
+    /// Returns whether the supplied `token_id` exists in the chain state.
+    async fn token_id_exists(&self, token_id: TokenId) -> bool {
+        self.get_raw_token_factory(token_id).await.is_some()
+    }
+
+    /// Returns raw token factory data if found under the specified `token_id`,
+    /// and `None` otherwise
+    async fn get_raw_token_factory(&self, token_id: TokenId) -> Option<Any> {
+        let asset_id = token_id.try_into().ok()?;
+        self.get_proto(&state_key::token_factory::by_id(&asset_id))
+            .await
+            .expect("no storage errors")
+    }
 }
 
-impl<T: StateWrite + ?Sized> TokenManager for T {}
+impl<T: StateRead + ?Sized> TokenFactoryData for T {}
 
 trait Inner: StateWrite {
     async fn increment_factory_mint_count(&mut self, asset_id: &asset::Id) -> Result<u32> {
-        let key = crate::state_key::token_supply(asset_id);
+        let key = state_key::token_factory::by_id(asset_id);
         let key = key.as_bytes();
         let prev: u32 = self.get_factory_mint_count_from_key(key).await; 
 
@@ -95,9 +117,8 @@ trait Inner: StateWrite {
     }
 
     async fn set_factory_supply(&mut self, asset_id: &asset::Id, supply: Amount) -> Result<()> {
-        let key = crate::state_key::token_supply(asset_id);
-        let key = key.as_bytes();
-        self.nonverifiable_put_raw(key.to_vec(), supply.to_be_bytes().to_vec());
+        let key = state_key::token_factory::by_id(asset_id);
+        self.put_raw(key, supply.to_be_bytes().to_vec());
         Ok(())
     }
 }

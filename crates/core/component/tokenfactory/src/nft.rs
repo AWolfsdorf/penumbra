@@ -30,10 +30,6 @@ impl TokenFactoryNft {
         }
     }
 
-    pub fn asset_id(&self) -> asset::Id {
-        self.metadata.id()
-    }
-
     pub fn next_sequence(&self) -> Self {
         TokenFactoryNft::new(self.token_id.clone(), self.seq + 1)
     }

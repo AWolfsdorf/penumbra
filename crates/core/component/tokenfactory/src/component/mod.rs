@@ -3,4 +3,4 @@ mod factory;
 mod token_manager;
 
 pub use factory::{StateReadExt, StateWriteExt, TokenFactory};
-pub use token_manager::TokenManager;
+pub use token_manager::{TokenFactoryData, TokenManager};

@@ -9,7 +9,7 @@ use penumbra_sdk_auction::auction::dutch::actions::ActionDutchAuctionSchedule;
 use penumbra_sdk_auction::auction::dutch::actions::ActionDutchAuctionWithdrawPlan;
 use penumbra_sdk_community_pool::{CommunityPoolDeposit, CommunityPoolOutput, CommunityPoolSpend};
 use penumbra_sdk_funding::liquidity_tournament::ActionLiquidityTournamentVotePlan;
-use penumbra_sdk_token_factory::TokenBurnPlan;
+use penumbra_sdk_token_factory::burn::TokenBurnPlan;
 use penumbra_sdk_txhash::{EffectHash, EffectingData};
 
 use penumbra_sdk_dex::{
