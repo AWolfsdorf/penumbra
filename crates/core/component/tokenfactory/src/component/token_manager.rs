@@ -14,7 +14,7 @@ use crate::{state_key, TokenCreate, TokenFactoryNft, TokenId};
 pub trait TokenManager: StateWrite {
     #[instrument(name = "token_manager", skip_all)]
     async fn burn_token(&mut self, _token_id: TokenId, _amount: Amount) -> Result<()> {
-        // TODO: Implement
+        // TODO: Implement if needed
         Ok(())
     }
 
