@@ -3,9 +3,8 @@ mod common;
 use self::common::TempStorageExt;
 use cnidarium::{ArcStateDeltaExt, StateDelta, TempStorage};
 use cnidarium_component::{ActionHandler, Component};
-use penumbra_sdk_asset::asset::{self, Metadata};
 use penumbra_sdk_num::Amount;
-use penumbra_sdk_token_factory::{create::TokenCreatePlan, component::TokenFactory};
+use penumbra_sdk_token_factory::{component::TokenFactory, create::TokenCreatePlan, TokenFactoryPosition, TokenId};
 use rand_core::SeedableRng;
 use std::sync::Arc;
 
@@ -21,21 +20,22 @@ async fn token_create() -> anyhow::Result<()> {
 
     let mut state = Arc::new(state);
 
-    // Get test metadata from the asset cache
-    let metadata = asset::Cache::with_known_assets()
-        .get_by_id(asset::Id::from_str("wtest_usd").unwrap())
-        .ok_or_else(|| anyhow::anyhow!("wtest_usd not found in asset cache"))?;
-
     // Generate a random nonce
-    let mut rng = rand_chacha::ChaChaRng::seed_from_u64(1312);
-    let mut nonce_bytes = [0u8; 32];
-    rand_core::RngCore::fill_bytes(&mut rng, &mut nonce_bytes);
+    let rng = rand_chacha::ChaChaRng::seed_from_u64(1312);
+
+    // Create a TokenFactoryPosition to generate the correct TokenId
+    let initial_supply = Amount::from(1_000_000u64);
+    let position = TokenFactoryPosition::new(
+        rng,
+        initial_supply,
+    );
+    let token_id = position.token_id;
 
     // Create a token create plan
     let create_plan = TokenCreatePlan {
-        metadata,
-        nonce: nonce_bytes,
-        initial_supply: Amount::from(1_000_000u64),
+        token_id,
+        nonce: position.nonce,
+        initial_supply,
     };
 
     // Convert the plan to an action
@@ -63,19 +63,16 @@ async fn token_create_with_zero_supply() -> anyhow::Result<()> {
 
     let mut state = Arc::new(state);
 
-    // Get test metadata from the asset cache
-    let metadata = asset::Cache::with_known_assets()
-        .get_by_id(asset::Id::from_str("wtest_usd").unwrap())
-        .ok_or_else(|| anyhow::anyhow!("wtest_usd not found in asset cache"))?;
-
     // Generate a random nonce
     let mut rng = rand_chacha::ChaChaRng::seed_from_u64(1312);
     let mut nonce_bytes = [0u8; 32];
     rand_core::RngCore::fill_bytes(&mut rng, &mut nonce_bytes);
 
+    let token_id = TokenId::new(nonce_bytes);
+
     // Create a token create plan with zero initial supply
     let create_plan = TokenCreatePlan {
-        metadata,
+        token_id,
         nonce: nonce_bytes,
         initial_supply: Amount::from(0u64),
     };
@@ -105,19 +102,16 @@ async fn token_create_duplicate_id() -> anyhow::Result<()> {
 
     let mut state = Arc::new(state);
 
-    // Get test metadata from the asset cache
-    let metadata = asset::Cache::with_known_assets()
-        .get_by_id(asset::Id::from_str("wtest_usd").unwrap())
-        .ok_or_else(|| anyhow::anyhow!("wtest_usd not found in asset cache"))?;
-
     // Generate a random nonce
     let mut rng = rand_chacha::ChaChaRng::seed_from_u64(1312);
     let mut nonce_bytes = [0u8; 32];
     rand_core::RngCore::fill_bytes(&mut rng, &mut nonce_bytes);
 
+    let token_id = TokenId::new(nonce_bytes);
+
     // Create a token create plan
     let create_plan = TokenCreatePlan {
-        metadata: metadata.clone(),
+        token_id,
         nonce: nonce_bytes,
         initial_supply: Amount::from(1_000_000u64),
     };
@@ -134,7 +128,7 @@ async fn token_create_duplicate_id() -> anyhow::Result<()> {
 
     // Try to create the same token again
     let create_plan = TokenCreatePlan {
-        metadata,
+        token_id,
         nonce: nonce_bytes,
         initial_supply: Amount::from(1_000_000u64),
     };

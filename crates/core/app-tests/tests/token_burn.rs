@@ -6,7 +6,6 @@ use cnidarium_component::{ActionHandler, Component};
 use penumbra_sdk_asset::asset;
 use penumbra_sdk_num::Amount;
 use penumbra_sdk_token_factory::{burn::TokenBurnPlan, component::TokenFactory, TokenId};
-use rand_core::SeedableRng;
 use std::sync::Arc;
 
 #[tokio::test]
@@ -47,8 +46,6 @@ async fn token_burn() -> anyhow::Result<()> {
 
 #[tokio::test]
 async fn token_burn_with_zero_amount() -> anyhow::Result<()> {
-    let mut rng = rand_chacha::ChaChaRng::seed_from_u64(1312);
-
     let storage = TempStorage::new_with_penumbra_prefixes()
         .await?
         .apply_default_genesis()
@@ -57,7 +54,6 @@ async fn token_burn_with_zero_amount() -> anyhow::Result<()> {
 
     // Get a test token to burn
     let gm = asset::Cache::with_known_assets().get_unit("gm").unwrap();
-    let token_id: TokenId = gm.id().into();
     let amount = Amount::from(0u64);
 
     // Create a token burn plan

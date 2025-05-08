@@ -23,7 +23,7 @@ impl TokenFactoryPosition {
         rng.fill_bytes(&mut nonce);
 
         let mut state = blake2b_simd::Params::default()
-            .personal(b"penumbra_tokenfactory_id")
+            .personal(b"Penumbra_TF_Id")
             .to_state();
 
         state.update(&nonce);
@@ -38,8 +38,9 @@ impl TokenFactoryPosition {
     }
 
     pub fn new_with_id(token_id: TokenId, nonce: [u8; 32], initial_supply: Amount) -> Self {
+        let base_denom = state_key::token_factory::by_id(&token_id.into());
         let metadata = asset::REGISTRY
-            .parse_denom(&state_key::token_factory::by_id(&token_id.into()))
+            .parse_denom(&base_denom)
             .expect("base denom format is valid");
 
         Self { token_id, nonce, metadata, initial_supply }
