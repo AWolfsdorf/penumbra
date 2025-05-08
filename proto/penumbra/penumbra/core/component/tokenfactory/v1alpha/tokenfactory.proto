@@ -17,12 +17,18 @@ message GenesisContent {
 
 // TokenFactoryPosition defines the position for a token factory.
 message TokenFactoryPosition {
+  // The token id for the token factory
+  TokenId token_id = 1;
   // A random value used to disambiguate different positions with the exact same
   // trading function.  The chain should reject newly created positions with the
   // same nonce as an existing position.  This ensures that `TokenId`s will
   // be unique, and allows us to track position ownership with a
   // sequence of stateful NFTs based on the `TokenId`.
-  bytes nonce = 1;
+  bytes nonce = 2;
+  // The metadata for the token
+  penumbra.core.asset.v1.Metadata metadata = 3;
+  // The initial supply of the token
+  num.v1.Amount initial_supply = 4;
 }
 
 // TokenFactoryNft defines the NFT for a token factory.
@@ -68,12 +74,14 @@ message TokenBurnPlan {
 
 // TokenCreate defines the action for creating a new token.
 message TokenCreate {
+  // The token id for the token factory
+  TokenId token_id = 1;
   // The metadata for the token
-  penumbra.core.asset.v1.Metadata metadata = 1;
+  penumbra.core.asset.v1.Metadata metadata = 2;
   // The nonce used to generate the token ID
-  bytes nonce = 2;
+  bytes nonce = 3;
   // The initial supply of the token
-  num.v1.Amount initial_supply = 3;
+  num.v1.Amount initial_supply = 4;
 }
 
 // EventTokenCreate defines the event for creating a token.
@@ -85,10 +93,12 @@ message EventTokenCreate {
 
 // TokenCreatePlan defines the plan for creating a token.
 message TokenCreatePlan {
+  // The token id for the token factory
+  TokenId token_id = 1;
   // The metadata for the token
-  penumbra.core.asset.v1.Metadata metadata = 1;
+  penumbra.core.asset.v1.Metadata metadata = 2;
   // The nonce used to generate the token ID
-  bytes nonce = 2;
+  bytes nonce = 3;
   // The initial supply of the token
-  num.v1.Amount initial_supply = 3;
+  num.v1.Amount initial_supply = 4;
 }

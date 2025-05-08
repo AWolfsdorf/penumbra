@@ -11,15 +11,20 @@ use crate::{TokenId, TokenFactoryPosition};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(try_from = "pb::TokenCreate", into = "pb::TokenCreate")]
 pub struct TokenCreate {
+    pub token_id: TokenId,
     pub metadata: Metadata,
     pub nonce: [u8; 32],
     pub initial_supply: Amount,
 }
 
 impl TokenCreate {
-    pub fn token_id(&self) -> TokenId {
-        let position = TokenFactoryPosition { nonce: self.nonce };
-        position.id()
+    pub fn position(&self) -> TokenFactoryPosition {
+        TokenFactoryPosition { 
+            token_id: self.token_id,
+            metadata: self.metadata.clone(), 
+            initial_supply: self.initial_supply, 
+            nonce: self.nonce 
+        }
     }
 }
 
@@ -38,6 +43,7 @@ impl DomainType for TokenCreate {
 impl From<TokenCreate> for pb::TokenCreate {
     fn from(value: TokenCreate) -> Self {
         Self {
+            token_id: Some(value.token_id.into()),
             metadata: Some(value.metadata.into()),
             nonce: value.nonce.to_vec(),
             initial_supply: Some(value.initial_supply.into()),
@@ -49,6 +55,10 @@ impl TryFrom<pb::TokenCreate> for TokenCreate {
     type Error = anyhow::Error;
     fn try_from(value: pb::TokenCreate) -> Result<Self, Self::Error> {
         Ok(Self {
+            token_id: value.token_id
+                .ok_or_else(|| anyhow::anyhow!("missing token id"))?
+                .try_into()
+                .context("token id malformed")?,
             metadata: value
                 .metadata
                 .ok_or_else(|| anyhow::anyhow!("missing metadata"))?

@@ -23,13 +23,15 @@ impl ActionHandler for TokenCreate {
             "Token factory MUST be enabled to create tokens."
         );
 
+        let position = self.position();
+        
         // Create the token and mint the initial supply
-        state.create_token(self.clone()).await?;
+        state.create_token(&position).await?;
 
         // Record the event
         state.record_proto(EventTokenCreate {
-            token_id: self.token_id(),
-            amount: self.initial_supply,
+            token_id: position.token_id,
+            amount: position.initial_supply,
         }.to_proto());
 
         Ok(())

@@ -4,7 +4,7 @@ use regex::Regex;
 
 use penumbra_sdk_proto::{core::component::tokenfactory::v1alpha as pb, DomainType};
 
-use crate::TokenId;
+use crate::{state_key, TokenId};
 
 /// A token factory NFT represents minting rights for a token created through the token factory.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -20,7 +20,7 @@ pub struct TokenFactoryNft {
 impl TokenFactoryNft {
     pub fn new(token_id: TokenId, seq: u64) -> Self {
         let metadata = asset::REGISTRY
-            .parse_denom(&format!("factory_mint_{seq}_{token_id}"))
+            .parse_denom(&state_key::token_factory_nft::nft_minting_rights(seq, &token_id.into()))
             .expect("base denom format is valid");
 
         TokenFactoryNft {
@@ -28,6 +28,10 @@ impl TokenFactoryNft {
             seq,
             metadata,
         }
+    }
+
+    pub fn denom(&self) -> asset::Id {
+        self.metadata.id()
     }
 
     pub fn next_sequence(&self) -> Self {
@@ -105,6 +109,8 @@ impl std::fmt::Display for TokenFactoryNft {
 #[cfg(test)]
 mod tests {
 
+    use penumbra_sdk_num::Amount;
+
     use crate::TokenFactoryPosition;
 
     use super::*;
@@ -113,9 +119,10 @@ mod tests {
     fn token_factory_nft_creation() {
         let position = TokenFactoryPosition::new(
             rand_core::OsRng,
+            Amount::from(1000u64),
         );
         
-        let token_id = position.id();
+        let token_id = position.token_id;
         let sequence = 0;
         let nft = TokenFactoryNft::new(token_id.clone(), sequence);
 
@@ -128,9 +135,10 @@ mod tests {
     fn token_factory_nft_next_sequence() {
         let position = TokenFactoryPosition::new(
             rand_core::OsRng,
+            Amount::from(1000u64),
         );
         
-        let token_id = position.id();
+        let token_id = position.token_id;
         let sequence = 0;
         let nft = TokenFactoryNft::new(token_id.clone(), sequence);
         let next = nft.next_sequence();

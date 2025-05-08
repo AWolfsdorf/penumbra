@@ -1,37 +1,48 @@
 use anyhow::Context;
-use penumbra_sdk_asset::asset;
+use penumbra_sdk_asset::asset::{self, Metadata};
+use penumbra_sdk_num::Amount;
 use rand_core::CryptoRngCore;
 use penumbra_sdk_proto::{
-    core::component::tokenfactory::v1alpha as pb,
-    DomainType,
-    serializers::bech32str
+    core::component::tokenfactory::v1alpha as pb, serializers::bech32str, DomainType
 };
 
 use serde::{Deserialize, Serialize};
 
+use crate::state_key;
+
 pub struct TokenFactoryPosition {
+    pub token_id: TokenId,
     pub nonce: [u8; 32],
+    pub metadata: Metadata,
+    pub initial_supply: Amount,
 }
 
 impl TokenFactoryPosition {
-    pub fn new<R: CryptoRngCore>(mut rng: R) -> Self {
+    pub fn new<R: CryptoRngCore>(mut rng: R, initial_supply: Amount) -> Self {
         let mut nonce = [0; 32];
         rng.fill_bytes(&mut nonce);
 
-        Self { nonce }
-    }
-
-    pub fn id(&self) -> TokenId {
         let mut state = blake2b_simd::Params::default()
             .personal(b"penumbra_tokenfactory_id")
             .to_state();
 
-        state.update(&self.nonce);
+        state.update(&nonce);
+        state.update(&initial_supply.to_be_bytes());
 
         let hash = state.finalize();
         let mut bytes = [0; 32];
         bytes[0..32].copy_from_slice(&hash.as_bytes()[0..32]);
-        TokenId(bytes)
+        let token_id = TokenId(bytes);
+
+        let metadata = asset::REGISTRY
+            .parse_denom(&state_key::token_factory::by_id(&token_id.into()))
+            .expect("base denom format is valid");
+
+        Self { token_id, nonce, metadata, initial_supply }
+    }
+
+    pub fn denom(&self) -> asset::Id {
+        self.metadata.id()
     }
 }
 
@@ -39,6 +50,21 @@ impl TokenFactoryPosition {
 #[derive(PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Serialize, Deserialize)]
 #[serde(try_from = "pb::TokenId", into = "pb::TokenId")]
 pub struct TokenId(pub [u8; 32]);
+
+impl TokenId {
+    pub fn new(bytes: [u8; 32]) -> Self {
+        Self(bytes)
+    }
+
+    pub fn from_str(s: &str) -> Result<Self, anyhow::Error> {
+        let inner = bech32str::decode(
+            s,
+            bech32str::tokenfactory::BECH32_PREFIX,
+            bech32str::Bech32m,
+        )?;
+        Ok(TokenId(inner.try_into().unwrap()))
+    }
+}
 
 
 impl From<asset::Id> for TokenId {

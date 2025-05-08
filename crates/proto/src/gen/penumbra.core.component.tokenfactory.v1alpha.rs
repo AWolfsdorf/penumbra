@@ -34,13 +34,22 @@ impl ::prost::Name for GenesisContent {
 /// TokenFactoryPosition defines the position for a token factory.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct TokenFactoryPosition {
+    /// The token id for the token factory
+    #[prost(message, optional, tag = "1")]
+    pub token_id: ::core::option::Option<TokenId>,
     /// A random value used to disambiguate different positions with the exact same
     /// trading function.  The chain should reject newly created positions with the
     /// same nonce as an existing position.  This ensures that `TokenId`s will
     /// be unique, and allows us to track position ownership with a
     /// sequence of stateful NFTs based on the `TokenId`.
-    #[prost(bytes = "vec", tag = "1")]
+    #[prost(bytes = "vec", tag = "2")]
     pub nonce: ::prost::alloc::vec::Vec<u8>,
+    /// The metadata for the token
+    #[prost(message, optional, tag = "3")]
+    pub metadata: ::core::option::Option<super::super::super::asset::v1::Metadata>,
+    /// The initial supply of the token
+    #[prost(message, optional, tag = "4")]
+    pub initial_supply: ::core::option::Option<super::super::super::num::v1::Amount>,
 }
 impl ::prost::Name for TokenFactoryPosition {
     const NAME: &'static str = "TokenFactoryPosition";
@@ -155,14 +164,17 @@ impl ::prost::Name for TokenBurnPlan {
 /// TokenCreate defines the action for creating a new token.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct TokenCreate {
-    /// The metadata for the token
+    /// The token id for the token factory
     #[prost(message, optional, tag = "1")]
+    pub token_id: ::core::option::Option<TokenId>,
+    /// The metadata for the token
+    #[prost(message, optional, tag = "2")]
     pub metadata: ::core::option::Option<super::super::super::asset::v1::Metadata>,
     /// The nonce used to generate the token ID
-    #[prost(bytes = "vec", tag = "2")]
+    #[prost(bytes = "vec", tag = "3")]
     pub nonce: ::prost::alloc::vec::Vec<u8>,
     /// The initial supply of the token
-    #[prost(message, optional, tag = "3")]
+    #[prost(message, optional, tag = "4")]
     pub initial_supply: ::core::option::Option<super::super::super::num::v1::Amount>,
 }
 impl ::prost::Name for TokenCreate {
@@ -197,14 +209,17 @@ impl ::prost::Name for EventTokenCreate {
 /// TokenCreatePlan defines the plan for creating a token.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct TokenCreatePlan {
-    /// The metadata for the token
+    /// The token id for the token factory
     #[prost(message, optional, tag = "1")]
+    pub token_id: ::core::option::Option<TokenId>,
+    /// The metadata for the token
+    #[prost(message, optional, tag = "2")]
     pub metadata: ::core::option::Option<super::super::super::asset::v1::Metadata>,
     /// The nonce used to generate the token ID
-    #[prost(bytes = "vec", tag = "2")]
+    #[prost(bytes = "vec", tag = "3")]
     pub nonce: ::prost::alloc::vec::Vec<u8>,
     /// The initial supply of the token
-    #[prost(message, optional, tag = "3")]
+    #[prost(message, optional, tag = "4")]
     pub initial_supply: ::core::option::Option<super::super::super::num::v1::Amount>,
 }
 impl ::prost::Name for TokenCreatePlan {

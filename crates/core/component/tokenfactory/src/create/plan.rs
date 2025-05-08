@@ -3,12 +3,14 @@ use penumbra_sdk_num::Amount;
 use penumbra_sdk_proto::{penumbra::core::component::tokenfactory::v1alpha as pb, DomainType};
 use serde::{Deserialize, Serialize};
 
-
 use super::TokenCreate;
+
+use crate::TokenId;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(try_from = "pb::TokenCreatePlan", into = "pb::TokenCreatePlan")]
 pub struct TokenCreatePlan {
+    pub token_id: TokenId,
     pub metadata: Metadata,
     pub nonce: [u8; 32],
     pub initial_supply: Amount,
@@ -17,6 +19,7 @@ pub struct TokenCreatePlan {
 impl TokenCreatePlan {
     pub fn to_action(&self) -> TokenCreate {
         TokenCreate {
+            token_id: self.token_id,
             metadata: self.metadata.clone(),
             nonce: self.nonce,
             initial_supply: self.initial_supply,
@@ -24,16 +27,17 @@ impl TokenCreatePlan {
     }
 
     pub fn balance(&self) -> Balance {
+
         // The create action produces the initial supply and the minting rights NFT
-        let token_id = self.to_action().token_id();
-        let nft = crate::TokenFactoryNft::new(token_id, 0);
+        let position = self.to_action().position();
+        let nft = crate::TokenFactoryNft::new(position.token_id, 0);
         
         Balance::from(Value {
-            asset_id: self.metadata.id(),
+            asset_id: position.denom(),
             amount: self.initial_supply,
         }) + Balance::from(Value {
-            asset_id: nft.asset_id(),
-            amount: Amount::from(1u128),
+            asset_id: nft.denom().into(),
+            amount: 1u128.into(),
         })
     }
 }
@@ -45,6 +49,7 @@ impl DomainType for TokenCreatePlan {
 impl From<TokenCreatePlan> for pb::TokenCreatePlan {
     fn from(domain: TokenCreatePlan) -> Self {
         Self {
+            token_id: Some(domain.token_id.into()),
             metadata: Some(domain.metadata.into()),
             nonce: domain.nonce.to_vec(),
             initial_supply: Some(domain.initial_supply.into()),
@@ -56,6 +61,9 @@ impl TryFrom<pb::TokenCreatePlan> for TokenCreatePlan {
     type Error = anyhow::Error;
     fn try_from(msg: pb::TokenCreatePlan) -> Result<Self, Self::Error> {
         Ok(Self {
+            token_id: msg.token_id
+                .ok_or_else(|| anyhow::anyhow!("missing token id"))?
+                .try_into()?,
             metadata: msg
                 .metadata
                 .ok_or_else(|| anyhow::anyhow!("TokenCreatePlan message is missing metadata"))?

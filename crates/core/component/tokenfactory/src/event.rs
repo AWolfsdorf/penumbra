@@ -39,7 +39,7 @@ impl From<TokenCreate> for EventTokenCreate {
 impl From<&TokenCreate> for EventTokenCreate {
     fn from(value: &TokenCreate) -> Self {
         Self {
-            token_id: value.token_id(),
+            token_id: value.position().token_id,
             amount: value.initial_supply,
         }
     }

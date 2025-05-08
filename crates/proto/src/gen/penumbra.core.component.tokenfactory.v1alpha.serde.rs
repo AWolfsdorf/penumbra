@@ -554,6 +554,9 @@ impl serde::Serialize for TokenCreate {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
+        if self.token_id.is_some() {
+            len += 1;
+        }
         if self.metadata.is_some() {
             len += 1;
         }
@@ -564,6 +567,9 @@ impl serde::Serialize for TokenCreate {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("penumbra.core.component.tokenfactory.v1alpha.TokenCreate", len)?;
+        if let Some(v) = self.token_id.as_ref() {
+            struct_ser.serialize_field("tokenId", v)?;
+        }
         if let Some(v) = self.metadata.as_ref() {
             struct_ser.serialize_field("metadata", v)?;
         }
@@ -585,6 +591,8 @@ impl<'de> serde::Deserialize<'de> for TokenCreate {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "token_id",
+            "tokenId",
             "metadata",
             "nonce",
             "initial_supply",
@@ -593,6 +601,7 @@ impl<'de> serde::Deserialize<'de> for TokenCreate {
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
+            TokenId,
             Metadata,
             Nonce,
             InitialSupply,
@@ -618,6 +627,7 @@ impl<'de> serde::Deserialize<'de> for TokenCreate {
                         E: serde::de::Error,
                     {
                         match value {
+                            "tokenId" | "token_id" => Ok(GeneratedField::TokenId),
                             "metadata" => Ok(GeneratedField::Metadata),
                             "nonce" => Ok(GeneratedField::Nonce),
                             "initialSupply" | "initial_supply" => Ok(GeneratedField::InitialSupply),
@@ -640,11 +650,18 @@ impl<'de> serde::Deserialize<'de> for TokenCreate {
                 where
                     V: serde::de::MapAccess<'de>,
             {
+                let mut token_id__ = None;
                 let mut metadata__ = None;
                 let mut nonce__ = None;
                 let mut initial_supply__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
+                        GeneratedField::TokenId => {
+                            if token_id__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("tokenId"));
+                            }
+                            token_id__ = map_.next_value()?;
+                        }
                         GeneratedField::Metadata => {
                             if metadata__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("metadata"));
@@ -671,6 +688,7 @@ impl<'de> serde::Deserialize<'de> for TokenCreate {
                     }
                 }
                 Ok(TokenCreate {
+                    token_id: token_id__,
                     metadata: metadata__,
                     nonce: nonce__.unwrap_or_default(),
                     initial_supply: initial_supply__,
@@ -688,6 +706,9 @@ impl serde::Serialize for TokenCreatePlan {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
+        if self.token_id.is_some() {
+            len += 1;
+        }
         if self.metadata.is_some() {
             len += 1;
         }
@@ -698,6 +719,9 @@ impl serde::Serialize for TokenCreatePlan {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("penumbra.core.component.tokenfactory.v1alpha.TokenCreatePlan", len)?;
+        if let Some(v) = self.token_id.as_ref() {
+            struct_ser.serialize_field("tokenId", v)?;
+        }
         if let Some(v) = self.metadata.as_ref() {
             struct_ser.serialize_field("metadata", v)?;
         }
@@ -719,6 +743,8 @@ impl<'de> serde::Deserialize<'de> for TokenCreatePlan {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "token_id",
+            "tokenId",
             "metadata",
             "nonce",
             "initial_supply",
@@ -727,6 +753,7 @@ impl<'de> serde::Deserialize<'de> for TokenCreatePlan {
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
+            TokenId,
             Metadata,
             Nonce,
             InitialSupply,
@@ -752,6 +779,7 @@ impl<'de> serde::Deserialize<'de> for TokenCreatePlan {
                         E: serde::de::Error,
                     {
                         match value {
+                            "tokenId" | "token_id" => Ok(GeneratedField::TokenId),
                             "metadata" => Ok(GeneratedField::Metadata),
                             "nonce" => Ok(GeneratedField::Nonce),
                             "initialSupply" | "initial_supply" => Ok(GeneratedField::InitialSupply),
@@ -774,11 +802,18 @@ impl<'de> serde::Deserialize<'de> for TokenCreatePlan {
                 where
                     V: serde::de::MapAccess<'de>,
             {
+                let mut token_id__ = None;
                 let mut metadata__ = None;
                 let mut nonce__ = None;
                 let mut initial_supply__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
+                        GeneratedField::TokenId => {
+                            if token_id__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("tokenId"));
+                            }
+                            token_id__ = map_.next_value()?;
+                        }
                         GeneratedField::Metadata => {
                             if metadata__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("metadata"));
@@ -805,6 +840,7 @@ impl<'de> serde::Deserialize<'de> for TokenCreatePlan {
                     }
                 }
                 Ok(TokenCreatePlan {
+                    token_id: token_id__,
                     metadata: metadata__,
                     nonce: nonce__.unwrap_or_default(),
                     initial_supply: initial_supply__,
@@ -1035,14 +1071,32 @@ impl serde::Serialize for TokenFactoryPosition {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
+        if self.token_id.is_some() {
+            len += 1;
+        }
         if !self.nonce.is_empty() {
             len += 1;
         }
+        if self.metadata.is_some() {
+            len += 1;
+        }
+        if self.initial_supply.is_some() {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("penumbra.core.component.tokenfactory.v1alpha.TokenFactoryPosition", len)?;
+        if let Some(v) = self.token_id.as_ref() {
+            struct_ser.serialize_field("tokenId", v)?;
+        }
         if !self.nonce.is_empty() {
             #[allow(clippy::needless_borrow)]
             #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("nonce", pbjson::private::base64::encode(&self.nonce).as_str())?;
+        }
+        if let Some(v) = self.metadata.as_ref() {
+            struct_ser.serialize_field("metadata", v)?;
+        }
+        if let Some(v) = self.initial_supply.as_ref() {
+            struct_ser.serialize_field("initialSupply", v)?;
         }
         struct_ser.end()
     }
@@ -1054,12 +1108,20 @@ impl<'de> serde::Deserialize<'de> for TokenFactoryPosition {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "token_id",
+            "tokenId",
             "nonce",
+            "metadata",
+            "initial_supply",
+            "initialSupply",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
+            TokenId,
             Nonce,
+            Metadata,
+            InitialSupply,
             __SkipField__,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
@@ -1082,7 +1144,10 @@ impl<'de> serde::Deserialize<'de> for TokenFactoryPosition {
                         E: serde::de::Error,
                     {
                         match value {
+                            "tokenId" | "token_id" => Ok(GeneratedField::TokenId),
                             "nonce" => Ok(GeneratedField::Nonce),
+                            "metadata" => Ok(GeneratedField::Metadata),
+                            "initialSupply" | "initial_supply" => Ok(GeneratedField::InitialSupply),
                             _ => Ok(GeneratedField::__SkipField__),
                         }
                     }
@@ -1102,9 +1167,18 @@ impl<'de> serde::Deserialize<'de> for TokenFactoryPosition {
                 where
                     V: serde::de::MapAccess<'de>,
             {
+                let mut token_id__ = None;
                 let mut nonce__ = None;
+                let mut metadata__ = None;
+                let mut initial_supply__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
+                        GeneratedField::TokenId => {
+                            if token_id__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("tokenId"));
+                            }
+                            token_id__ = map_.next_value()?;
+                        }
                         GeneratedField::Nonce => {
                             if nonce__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("nonce"));
@@ -1113,13 +1187,28 @@ impl<'de> serde::Deserialize<'de> for TokenFactoryPosition {
                                 Some(map_.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
                             ;
                         }
+                        GeneratedField::Metadata => {
+                            if metadata__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("metadata"));
+                            }
+                            metadata__ = map_.next_value()?;
+                        }
+                        GeneratedField::InitialSupply => {
+                            if initial_supply__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("initialSupply"));
+                            }
+                            initial_supply__ = map_.next_value()?;
+                        }
                         GeneratedField::__SkipField__ => {
                             let _ = map_.next_value::<serde::de::IgnoredAny>()?;
                         }
                     }
                 }
                 Ok(TokenFactoryPosition {
+                    token_id: token_id__,
                     nonce: nonce__.unwrap_or_default(),
+                    metadata: metadata__,
+                    initial_supply: initial_supply__,
                 })
             }
         }
