@@ -34,6 +34,10 @@ impl TokenFactoryPosition {
         bytes[0..32].copy_from_slice(&hash.as_bytes()[0..32]);
         let token_id = TokenId(bytes);
 
+        Self::new_with_id(token_id, nonce, initial_supply)
+    }
+
+    pub fn new_with_id(token_id: TokenId, nonce: [u8; 32], initial_supply: Amount) -> Self {
         let metadata = asset::REGISTRY
             .parse_denom(&state_key::token_factory::by_id(&token_id.into()))
             .expect("base denom format is valid");

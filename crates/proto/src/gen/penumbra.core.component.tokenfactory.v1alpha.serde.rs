@@ -557,9 +557,6 @@ impl serde::Serialize for TokenCreate {
         if self.token_id.is_some() {
             len += 1;
         }
-        if self.metadata.is_some() {
-            len += 1;
-        }
         if !self.nonce.is_empty() {
             len += 1;
         }
@@ -569,9 +566,6 @@ impl serde::Serialize for TokenCreate {
         let mut struct_ser = serializer.serialize_struct("penumbra.core.component.tokenfactory.v1alpha.TokenCreate", len)?;
         if let Some(v) = self.token_id.as_ref() {
             struct_ser.serialize_field("tokenId", v)?;
-        }
-        if let Some(v) = self.metadata.as_ref() {
-            struct_ser.serialize_field("metadata", v)?;
         }
         if !self.nonce.is_empty() {
             #[allow(clippy::needless_borrow)]
@@ -593,7 +587,6 @@ impl<'de> serde::Deserialize<'de> for TokenCreate {
         const FIELDS: &[&str] = &[
             "token_id",
             "tokenId",
-            "metadata",
             "nonce",
             "initial_supply",
             "initialSupply",
@@ -602,7 +595,6 @@ impl<'de> serde::Deserialize<'de> for TokenCreate {
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             TokenId,
-            Metadata,
             Nonce,
             InitialSupply,
             __SkipField__,
@@ -628,7 +620,6 @@ impl<'de> serde::Deserialize<'de> for TokenCreate {
                     {
                         match value {
                             "tokenId" | "token_id" => Ok(GeneratedField::TokenId),
-                            "metadata" => Ok(GeneratedField::Metadata),
                             "nonce" => Ok(GeneratedField::Nonce),
                             "initialSupply" | "initial_supply" => Ok(GeneratedField::InitialSupply),
                             _ => Ok(GeneratedField::__SkipField__),
@@ -651,7 +642,6 @@ impl<'de> serde::Deserialize<'de> for TokenCreate {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut token_id__ = None;
-                let mut metadata__ = None;
                 let mut nonce__ = None;
                 let mut initial_supply__ = None;
                 while let Some(k) = map_.next_key()? {
@@ -661,12 +651,6 @@ impl<'de> serde::Deserialize<'de> for TokenCreate {
                                 return Err(serde::de::Error::duplicate_field("tokenId"));
                             }
                             token_id__ = map_.next_value()?;
-                        }
-                        GeneratedField::Metadata => {
-                            if metadata__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("metadata"));
-                            }
-                            metadata__ = map_.next_value()?;
                         }
                         GeneratedField::Nonce => {
                             if nonce__.is_some() {
@@ -689,7 +673,6 @@ impl<'de> serde::Deserialize<'de> for TokenCreate {
                 }
                 Ok(TokenCreate {
                     token_id: token_id__,
-                    metadata: metadata__,
                     nonce: nonce__.unwrap_or_default(),
                     initial_supply: initial_supply__,
                 })
@@ -709,9 +692,6 @@ impl serde::Serialize for TokenCreatePlan {
         if self.token_id.is_some() {
             len += 1;
         }
-        if self.metadata.is_some() {
-            len += 1;
-        }
         if !self.nonce.is_empty() {
             len += 1;
         }
@@ -721,9 +701,6 @@ impl serde::Serialize for TokenCreatePlan {
         let mut struct_ser = serializer.serialize_struct("penumbra.core.component.tokenfactory.v1alpha.TokenCreatePlan", len)?;
         if let Some(v) = self.token_id.as_ref() {
             struct_ser.serialize_field("tokenId", v)?;
-        }
-        if let Some(v) = self.metadata.as_ref() {
-            struct_ser.serialize_field("metadata", v)?;
         }
         if !self.nonce.is_empty() {
             #[allow(clippy::needless_borrow)]
@@ -745,7 +722,6 @@ impl<'de> serde::Deserialize<'de> for TokenCreatePlan {
         const FIELDS: &[&str] = &[
             "token_id",
             "tokenId",
-            "metadata",
             "nonce",
             "initial_supply",
             "initialSupply",
@@ -754,7 +730,6 @@ impl<'de> serde::Deserialize<'de> for TokenCreatePlan {
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             TokenId,
-            Metadata,
             Nonce,
             InitialSupply,
             __SkipField__,
@@ -780,7 +755,6 @@ impl<'de> serde::Deserialize<'de> for TokenCreatePlan {
                     {
                         match value {
                             "tokenId" | "token_id" => Ok(GeneratedField::TokenId),
-                            "metadata" => Ok(GeneratedField::Metadata),
                             "nonce" => Ok(GeneratedField::Nonce),
                             "initialSupply" | "initial_supply" => Ok(GeneratedField::InitialSupply),
                             _ => Ok(GeneratedField::__SkipField__),
@@ -803,7 +777,6 @@ impl<'de> serde::Deserialize<'de> for TokenCreatePlan {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut token_id__ = None;
-                let mut metadata__ = None;
                 let mut nonce__ = None;
                 let mut initial_supply__ = None;
                 while let Some(k) = map_.next_key()? {
@@ -813,12 +786,6 @@ impl<'de> serde::Deserialize<'de> for TokenCreatePlan {
                                 return Err(serde::de::Error::duplicate_field("tokenId"));
                             }
                             token_id__ = map_.next_value()?;
-                        }
-                        GeneratedField::Metadata => {
-                            if metadata__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("metadata"));
-                            }
-                            metadata__ = map_.next_value()?;
                         }
                         GeneratedField::Nonce => {
                             if nonce__.is_some() {
@@ -841,7 +808,6 @@ impl<'de> serde::Deserialize<'de> for TokenCreatePlan {
                 }
                 Ok(TokenCreatePlan {
                     token_id: token_id__,
-                    metadata: metadata__,
                     nonce: nonce__.unwrap_or_default(),
                     initial_supply: initial_supply__,
                 })

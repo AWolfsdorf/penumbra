@@ -76,12 +76,10 @@ message TokenBurnPlan {
 message TokenCreate {
   // The token id for the token factory
   TokenId token_id = 1;
-  // The metadata for the token
-  penumbra.core.asset.v1.Metadata metadata = 2;
   // The nonce used to generate the token ID
-  bytes nonce = 3;
+  bytes nonce = 2;
   // The initial supply of the token
-  num.v1.Amount initial_supply = 4;
+  num.v1.Amount initial_supply = 3;
 }
 
 // EventTokenCreate defines the event for creating a token.
@@ -95,10 +93,8 @@ message EventTokenCreate {
 message TokenCreatePlan {
   // The token id for the token factory
   TokenId token_id = 1;
-  // The metadata for the token
-  penumbra.core.asset.v1.Metadata metadata = 2;
   // The nonce used to generate the token ID
-  bytes nonce = 3;
+  bytes nonce = 2;
   // The initial supply of the token
   num.v1.Amount initial_supply = 4;
 }

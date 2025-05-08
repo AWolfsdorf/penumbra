@@ -167,14 +167,11 @@ pub struct TokenCreate {
     /// The token id for the token factory
     #[prost(message, optional, tag = "1")]
     pub token_id: ::core::option::Option<TokenId>,
-    /// The metadata for the token
-    #[prost(message, optional, tag = "2")]
-    pub metadata: ::core::option::Option<super::super::super::asset::v1::Metadata>,
     /// The nonce used to generate the token ID
-    #[prost(bytes = "vec", tag = "3")]
+    #[prost(bytes = "vec", tag = "2")]
     pub nonce: ::prost::alloc::vec::Vec<u8>,
     /// The initial supply of the token
-    #[prost(message, optional, tag = "4")]
+    #[prost(message, optional, tag = "3")]
     pub initial_supply: ::core::option::Option<super::super::super::num::v1::Amount>,
 }
 impl ::prost::Name for TokenCreate {
@@ -212,11 +209,8 @@ pub struct TokenCreatePlan {
     /// The token id for the token factory
     #[prost(message, optional, tag = "1")]
     pub token_id: ::core::option::Option<TokenId>,
-    /// The metadata for the token
-    #[prost(message, optional, tag = "2")]
-    pub metadata: ::core::option::Option<super::super::super::asset::v1::Metadata>,
     /// The nonce used to generate the token ID
-    #[prost(bytes = "vec", tag = "3")]
+    #[prost(bytes = "vec", tag = "2")]
     pub nonce: ::prost::alloc::vec::Vec<u8>,
     /// The initial supply of the token
     #[prost(message, optional, tag = "4")]
